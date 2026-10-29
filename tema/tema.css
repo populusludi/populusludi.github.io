@@ -1,0 +1,43 @@
+/* Tema comune della Collezione: stessi caratteri, colori e intestazioni in tutti i giochi.
+   Va caricato DOPO lo stile di ogni gioco (la Collezione lo inserisce in fondo alla pagina).
+   Tavoli e pezzi restano quelli di ciascun gioco: qui si uniforma solo il contorno. */
+@font-face { font-family: "Zilla Slab"; font-weight: 500; font-display: swap; src: url(fonts/zilla-slab-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Zilla Slab"; font-weight: 700; font-display: swap; src: url(fonts/zilla-slab-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Nunito Sans"; font-weight: 400; font-display: swap; src: url(fonts/nunito-sans-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Nunito Sans"; font-weight: 400; font-style: italic; font-display: swap; src: url(fonts/nunito-sans-latin-400-italic.woff2) format("woff2"); }
+@font-face { font-family: "Nunito Sans"; font-weight: 600; font-display: swap; src: url(fonts/nunito-sans-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Nunito Sans"; font-weight: 700; font-display: swap; src: url(fonts/nunito-sans-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Nunito Sans"; font-weight: 800; font-display: swap; src: url(fonts/nunito-sans-latin-800-normal.woff2) format("woff2"); }
+
+:root {
+  --bg: #ebe7df; --surface: #f6f3ee; --ink: #23201c; --muted: #6a6259; --line: #d4ccbf;
+  --accent: #7a4a1f; --accent-ink: #fffaf2;
+  --f-display: "Zilla Slab", Rockwell, Georgia, serif;
+  --f-title: "Zilla Slab", Rockwell, Georgia, serif;
+  --f-body: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+}
+/* il tema scuro ripete i selettori dei giochi, così vince per ordine e non per peso */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a1816; --surface: #24211e; --ink: #eee8df; --muted: #a89e92; --line: #3c3732;
+    --accent: #e0a56a; --accent-ink: #1d140b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1816; --surface: #24211e; --ink: #eee8df; --muted: #a89e92; --line: #3c3732;
+  --accent: #e0a56a; --accent-ink: #1d140b;
+}
+
+body { font-family: var(--f-body); }
+header.top { align-items: center; }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: 2rem; line-height: 1; letter-spacing: .01em; }
+.langsel { margin-left: auto; }
+/* titoli di sezione: nessun maiuscoletto né spaziatura larga ereditati dai vecchi caratteri */
+.turn-name, details summary, .tray h2, .panel h2 { font-family: var(--f-display); font-weight: 700; letter-spacing: normal; }
+.turn-name { font-size: 1.15rem; }
+details summary { font-size: 1.05rem; }
+@media (max-width: 420px) {
+  header.top { column-gap: 10px; }
+  h1 { font-size: 1.6rem; }
+  .langsel { font-size: .85rem; padding: 3px 4px; }
+}

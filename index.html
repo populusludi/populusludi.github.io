@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Populus Ludi — Think ahead</title>
+<meta name="description" content="Six original board games and puzzles by Luis Fernando Marcelino, born in Brazil. Play Esparta and Ire free in your browser.">
+<meta property="og:title" content="Populus Ludi — Think ahead">
+<meta property="og:description" content="Six original board games and puzzles, born in Brazil. Play Esparta and Ire free in your browser.">
+<meta property="og:image" content="img/collezione.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="img/collezione.png">
+<meta name="theme-color" content="#ebe7df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1815" media="(prefers-color-scheme: dark)">
+<style>
+/* Stesso cassetto di noce del menu dell'app: due ripiani, i giochi del browser e quelli in arrivo nell'app */
+@font-face { font-family: "Alegreya Sans"; font-weight: 400; font-display: swap; src: url(esparta/fonts/alegreya-sans-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Alegreya Sans"; font-weight: 500; font-display: swap; src: url(esparta/fonts/alegreya-sans-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Alegreya Sans"; font-weight: 700; font-display: swap; src: url(esparta/fonts/alegreya-sans-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 600; font-display: swap; src: url(ire/fonts/cormorant-garamond-latin-600-normal.woff2) format("woff2"); }
+:root {
+  --bg: #ebe7df; --surface: #f7f4ee; --ink: #26211c; --muted: #6d6458; --line: #d6cdbf;
+  --walnut: #5a3a22; --shadow: rgba(70, 45, 20, .16);
+  --f-title: "Cormorant Garamond", Garamond, Georgia, serif;
+  --f-body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a1815; --surface: #24211d; --ink: #eee8de; --muted: #a69c8f; --line: #3a352e;
+    --walnut: #c79a6a; --shadow: rgba(0, 0, 0, .45); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1815; --surface: #24211d; --ink: #eee8de; --muted: #a69c8f; --line: #3a352e;
+  --walnut: #c79a6a; --shadow: rgba(0, 0, 0, .45); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1.05rem; line-height: 1.5; padding: 22px 16px 32px; }
+[hidden] { display: none !important; }
+.wrap { max-width: 640px; margin: 0 auto; display: grid; gap: 22px; }
+header { display: flex; align-items: center; gap: 14px; }
+header img { width: 60px; height: 60px; border-radius: 16px; box-shadow: 0 6px 14px -6px var(--shadow); flex: none; }
+.brand { min-width: 0; }
+h1 { font-family: var(--f-title); font-weight: 600; font-size: 2.2rem; line-height: 1.05; margin: 0; }
+.tag { margin: 4px 0 0; font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.langsel { margin-left: auto; font: inherit; font-size: .9rem; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.langsel:focus-visible, a:focus-visible { outline: 2px solid var(--walnut); outline-offset: 2px; }
+.intro { margin: 0; font-size: 1.12rem; }
+.shelf { display: grid; gap: 10px; }
+h2.sec { margin: 4px 0 0; font-weight: 700; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--walnut); display: flex; align-items: center; gap: 10px; }
+h2.sec::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.note { margin: 0; color: var(--muted); font-size: .95rem; }
+.games { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.game { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 14px; align-items: center; padding: 14px; border-radius: 16px;
+  background: var(--surface); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 10px 22px -16px var(--shadow); }
+a.game:hover { border-color: var(--walnut); }
+.game img { width: 76px; height: 76px; border-radius: 18px; display: block; }
+.game h3 { margin: 0 0 2px; font-family: var(--f-display, "Zilla Slab", Georgia, serif); font-size: 1.45rem; line-height: 1.1; font-weight: 700; }
+.game p { margin: 0; color: var(--muted); font-size: .97rem; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { font-size: .8rem; font-weight: 500; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); }
+.chip.play { border-color: var(--walnut); color: var(--walnut); font-weight: 700; }
+.soon .game { box-shadow: none; background: transparent; border-style: dashed; }
+.about p { margin: 0 0 8px; }
+.links { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; padding: 0; list-style: none; }
+a { color: var(--walnut); }
+footer { color: var(--muted); font-size: .85rem; text-align: center; border-top: 1px solid var(--line); padding-top: 14px; }
+footer a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="img/collezione.png" alt="">
+    <div class="brand"><h1>Populus Ludi</h1><p class="tag">Think ahead</p></div>
+    <select id="selLang" class="langsel" data-i18n-aria="lang"></select>
+  </header>
+
+  <p class="intro" data-i18n="intro"></p>
+
+  <section class="shelf">
+    <h2 class="sec" data-i18n="sec.play"></h2>
+    <ul class="games">
+      <li><a class="game" href="esparta/index.html">
+        <img src="img/esparta.png" alt="">
+        <div><h3>Esparta</h3><p data-i18n="esparta.d"></p>
+          <div class="meta"><span class="chip play" data-i18n="free"></span><span class="chip" data-i18n="p2cpu"></span></div></div>
+      </a></li>
+      <li><a class="game" href="ire/index.html">
+        <img src="img/ire.png" alt="">
+        <div><h3>Ire</h3><p data-i18n="ire.d"></p>
+          <div class="meta"><span class="chip play" data-i18n="free"></span><span class="chip" data-i18n="p1"></span></div></div>
+      </a></li>
+    </ul>
+  </section>
+
+  <section class="shelf soon">
+    <h2 class="sec" data-i18n="sec.app"></h2>
+    <p class="note" data-i18n="app.note"></p>
+    <ul class="games">
+      <li><div class="game">
+        <img src="img/metamorphose.png" alt="">
+        <div><h3>Metamorphose</h3><p data-i18n="meta.d"></p>
+          <div class="meta"><span class="chip" data-i18n="p2cpu"></span></div></div>
+      </div></li>
+      <li><div class="game">
+        <img src="img/tres.png" alt="">
+        <div><h3>Delta</h3><p data-i18n="tres.d"></p>
+          <div class="meta"><span class="chip" data-i18n="p3cpu"></span></div></div>
+      </div></li>
+      <li><div class="game">
+        <img src="img/giro.png" alt="">
+        <div><h3>Giro</h3><p data-i18n="giro.d"></p>
+          <div class="meta"><span class="chip" data-i18n="p24cpu"></span></div></div>
+      </div></li>
+      <li><div class="game">
+        <img src="img/transporte.png" alt="">
+        <div><h3>Travessia</h3><p data-i18n="transporte.d"></p>
+          <div class="meta"><span class="chip" data-i18n="p12coop"></span></div></div>
+      </div></li>
+    </ul>
+  </section>
+
+  <section class="shelf about">
+    <h2 class="sec" data-i18n="sec.author"></h2>
+    <p data-i18n="author"></p>
+    <ul class="links">
+      <li><a href="https://fernando-marcelino.itch.io/esparta" data-i18n="itch"></a></li>
+      <li><a href="privacy.html" data-i18n="privacy"></a></li>
+    </ul>
+  </section>
+
+  <footer>© 2026 Luis Fernando Marcelino · <a href="privacy.html" data-i18n="privacy"></a></footer>
+</div>
+
+<script>
+(() => {
+  const LANGS = { it: ['it', 'Italiano'], pt: ['pt-BR', 'Português'], en: ['en', 'English'], es: ['es', 'Español'] };
+  const D = {
+    it: { lang: 'Lingua',
+      intro: 'Sei giochi d’autore nati in Brasile, quattro giochi da tavolo e due rompicapi, per allenare la mente. Due si giocano qui, gratis, nel browser.',
+      'sec.play': 'Gioca ora nel browser', free: 'Gratis', 'sec.app': 'In arrivo nell’app',
+      'app.note': 'Tutti e sei i giochi, con il computer come avversario, arriveranno nell’app Populus Ludi per Android.',
+      'sec.author': 'L’autore',
+      author: 'I giochi sono di Luis Fernando Marcelino, che li ha ideati in Brasile. Esparta è nato in legno; Giro è stato finalista al Premio Archimede nel 2008.',
+      itch: 'Esparta su itch.io: lascia un commento', privacy: 'Privacy',
+      'esparta.d': 'Spartani e Iloti: corri verso la punta avversaria o cattura tutte le sue biglie.',
+      'ire.d': 'Solitario logico sul tabellone esagonale: togli tutti i bersagli e cattura l’altra Ire.',
+      'meta.d': 'Bruchi a rombo che si girano e cambiano direzione. Il loro retro è segreto.',
+      'tres.d': 'Per tre giocatori: si muove e si cattura come nella dama, e i pezzi che formano triangoli arrivano più lontano.',
+      'giro.d': 'Dadi neutri su una griglia 6×6: accerchiali e girali da X a O, poi a vuoto, poi fuori. Chi ne cattura di più vince.',
+      'transporte.d': 'Il problema di Lucas sull’esagono: chiari e scuri si scambiano di posto, una mossa a testa.',
+      p1: '1 giocatore', p2cpu: '2 giocatori o contro il computer', p3cpu: '3 giocatori o contro il computer',
+      p24cpu: '2–4 giocatori o contro il computer', p12coop: '1 o 2 giocatori, cooperativo' },
+    pt: { lang: 'Idioma',
+      intro: 'Seis jogos autorais nascidos no Brasil, quatro jogos de tabuleiro e dois quebra-cabeças, para treinar a mente. Dois se jogam aqui, de graça, no navegador.',
+      'sec.play': 'Jogue agora no navegador', free: 'Grátis', 'sec.app': 'Em breve no app',
+      'app.note': 'Os seis jogos, com o computador como adversário, vão chegar no app Populus Ludi para Android.',
+      'sec.author': 'O autor',
+      author: 'Os jogos são de Luis Fernando Marcelino, que os criou no Brasil. Esparta nasceu em madeira; Giro foi finalista do Prêmio Archimede em 2008.',
+      itch: 'Esparta no itch.io: deixe um comentário', privacy: 'Privacidade',
+      'esparta.d': 'Espartanos e Hilotas: corra até a ponta adversária ou capture todas as bolinhas dele.',
+      'ire.d': 'Paciência lógica no tabuleiro hexagonal: tire todos os alvos e capture a outra Ire.',
+      'meta.d': 'Lagartas em losango que viram e mudam de direção. O verso delas é secreto.',
+      'tres.d': 'Para três jogadores: move-se e captura-se como nas damas, e as peças que formam triângulos chegam mais longe.',
+      'giro.d': 'Dados neutros numa grade 6×6: cerque-os e vire-os de X para O, depois vazio, depois fora. Quem capturar mais vence.',
+      'transporte.d': 'O problema de Lucas no hexágono: claras e escuras trocam de lugar, um movimento de cada vez.',
+      p1: '1 jogador', p2cpu: '2 jogadores ou contra o computador', p3cpu: '3 jogadores ou contra o computador',
+      p24cpu: '2–4 jogadores ou contra o computador', p12coop: '1 ou 2 jogadores, cooperativo' },
+    en: { lang: 'Language',
+      intro: 'Six original games born in Brazil, four board games and two puzzles, to train the mind. Two of them you can play here, free, in your browser.',
+      'sec.play': 'Play now in your browser', free: 'Free', 'sec.app': 'Coming in the app',
+      'app.note': 'All six games, with the computer as an opponent, are coming to the Populus Ludi app for Android.',
+      'sec.author': 'The author',
+      author: 'The games are by Luis Fernando Marcelino, who designed them in Brazil. Esparta was first made in wood; Giro was a finalist of the Archimede Prize in 2008.',
+      itch: 'Esparta on itch.io: leave a comment', privacy: 'Privacy',
+      'esparta.d': 'Spartans and Helots: race to the enemy tip or capture all of their marbles.',
+      'ire.d': 'A logic solitaire on a hexagonal board: clear every target, then capture the other Ire.',
+      'meta.d': 'Rhombus caterpillars that flip over and change direction. Their backs are secret.',
+      'tres.d': 'For three players: move and capture as in draughts, and pieces that form triangles reach farther.',
+      'giro.d': 'Neutral dice on a 6×6 grid: surround them and turn them from X to O, then blank, then out. Most captures wins.',
+      'transporte.d': 'Lucas’s problem on a hexagon: light and dark pieces swap places, one move each in turn.',
+      p1: '1 player', p2cpu: '2 players or against the computer', p3cpu: '3 players or against the computer',
+      p24cpu: '2–4 players or against the computer', p12coop: '1 or 2 players, cooperative' },
+    es: { lang: 'Idioma',
+      intro: 'Seis juegos de autor nacidos en Brasil, cuatro juegos de mesa y dos rompecabezas, para entrenar la mente. Dos se juegan aquí, gratis, en el navegador.',
+      'sec.play': 'Juega ahora en el navegador', free: 'Gratis', 'sec.app': 'Próximamente en la app',
+      'app.note': 'Los seis juegos, con la computadora como rival, llegarán a la app Populus Ludi para Android.',
+      'sec.author': 'El autor',
+      author: 'Los juegos son de Luis Fernando Marcelino, que los creó en Brasil. Esparta nació en madera; Giro fue finalista del Premio Archimede en 2008.',
+      itch: 'Esparta en itch.io: deja un comentario', privacy: 'Privacidad',
+      'esparta.d': 'Espartanos e Ilotas: corre hacia la punta rival o captura todas sus canicas.',
+      'ire.d': 'Solitario lógico en el tablero hexagonal: quita todos los blancos y captura la otra Ire.',
+      'meta.d': 'Orugas en rombo que se voltean y cambian de dirección. Su reverso es secreto.',
+      'tres.d': 'Para tres jugadores: se mueve y se captura como en las damas, y las piezas que forman triángulos llegan más lejos.',
+      'giro.d': 'Dados neutros en una cuadrícula de 6×6: rodéalos y gíralos de X a O, luego a vacío, luego fuera. Gana quien capture más.',
+      'transporte.d': 'El problema de Lucas en el hexágono: claras y oscuras cambian de lugar, un movimiento cada uno.',
+      p1: '1 jugador', p2cpu: '2 jugadores o contra la computadora', p3cpu: '3 jugadores o contra la computadora',
+      p24cpu: '2–4 jugadores o contra la computadora', p12coop: '1 o 2 jugadores, cooperativo' },
+  };
+  const get = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const put = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  let lang = get('collezione.lingua');
+  if (!D[lang]) lang = { pt: 'pt', es: 'es', it: 'it' }[(navigator.language || '').toLowerCase().slice(0, 2)] || 'en';
+  const sel = document.getElementById('selLang');
+  function apply() {
+    document.querySelectorAll('[data-i18n]').forEach(e => { e.textContent = D[lang][e.dataset.i18n]; });
+    document.querySelectorAll('[data-i18n-aria]').forEach(e => e.setAttribute('aria-label', D[lang][e.dataset.i18nAria]));
+    document.documentElement.lang = LANGS[lang][0];
+    sel.value = lang;
+  }
+  // La lingua scelta qui vale anche dentro i giochi, come nel menu dell'app
+  function setLang(l) {
+    lang = l;
+    put('collezione.lingua', l);
+    ['esparta', 'ire'].forEach(g => put(g + '.lingua', l));
+    apply();
+  }
+  sel.replaceChildren(...Object.keys(LANGS).map(k => { const o = document.createElement('option'); o.value = k; o.lang = LANGS[k][0]; o.textContent = LANGS[k][1]; return o; }));
+  sel.addEventListener('change', () => setLang(sel.value));
+  apply();
+})();
+</script>
+<link rel="stylesheet" href="tema/tema.css">
+</body>
+</html>

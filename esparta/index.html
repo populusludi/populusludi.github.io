@@ -1,0 +1,1702 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#ecebe6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1a18" media="(prefers-color-scheme: dark)">
+<style>@font-face{font-family:"Marcellus SC";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/marcellus-sc-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/alegreya-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-style:italic;font-weight:400;font-display:swap;src:url(fonts/alegreya-sans-latin-400-italic.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/alegreya-sans-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Alegreya Sans";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/alegreya-sans-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2")}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{margin:0;overscroll-behavior:none}
+[hidden]{display:none!important}</style>
+<style>.back-menu{align-self:center;font:400 2.2rem/1 Georgia,serif;color:inherit;text-decoration:none;padding:0 6px 4px 2px;margin-left:-4px;-webkit-tap-highlight-color:transparent}.back-menu:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:4px}</style>
+</head>
+<body>
+<title>Esparta · Populus Ludi</title>
+<style>
+/* Layout: il tabellone di betulla a sinistra come oggetto fisico, turno e opzioni a destra */
+:root {
+  --bg: #ecebe6;
+  --surface: #f7f6f2;
+  --ink: #23211d;
+  --muted: #6b665c;
+  --line: #d3cfc4;
+  --accent: #b4532a;
+  --accent-ink: #ffffff;
+  --blu: #2f6fb8;
+  --rosso: #c23b32;
+  --wood: #ead7b4;
+  --wood-edge: #d6bc8f;
+  --burn: #d9895a;
+  --burn-deep: #c0683a;
+  --hint: #1f7a52;
+  --board-ink: #2a2118;
+  --board-hint: #17704a;
+  --f-display: "Marcellus SC", "Trajan Pro", Georgia, serif;
+  --f-body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --board-shadow: rgba(70, 45, 20, .24);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1a18; --surface: #252421; --ink: #ece8df; --muted: #a39d90; --line: #3b3934;
+    --accent: #e07b4c; --accent-ink: #1b1a18; --hint: #5fd09a; --board-shadow: rgba(0, 0, 0, .55); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1a18; --surface: #252421; --ink: #ece8df; --muted: #a39d90; --line: #3b3934;
+  --accent: #e07b4c; --accent-ink: #1b1a18; --hint: #5fd09a; --board-shadow: rgba(0, 0, 0, .55); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.5; padding-inline: 16px; padding-block: 20px 32px; }
+.wrap { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: 28px; align-items: start; }
+@media (max-width: 760px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
+header.top { max-width: 1080px; margin: 0 auto 18px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: 2.4rem; letter-spacing: .14em; margin: 0; line-height: 1; }
+.sub { color: var(--muted); margin: 0; }
+.langsel { margin-left: auto; align-self: center; font: inherit; font-size: .9rem; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.langsel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.boardbox { min-width: 0; display: flex; justify-content: center; }
+svg#board { width: min(100%, 520px, calc((100dvh - 120px) * 0.62)); height: auto; display: block; touch-action: manipulation; user-select: none; }
+.boardbox { position: sticky; top: 12px; }
+svg#board { filter: drop-shadow(0 12px 20px var(--board-shadow)); }
+.modes { display: grid; gap: 8px; }
+.modes label { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.modes select { font: inherit; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.modes select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cell { cursor: default; }
+.cell.act { cursor: pointer; }
+.cell:focus { outline: none; }
+.cell:focus-visible .hit { stroke: var(--accent); stroke-width: 3; }
+.panel { min-width: 0; display: grid; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.turn { display: flex; align-items: center; gap: 12px; }
+.dot { width: 26px; height: 26px; border-radius: 50%; flex: none; box-shadow: inset -3px -4px 6px rgba(0,0,0,.35), inset 3px 3px 5px rgba(255,255,255,.35); }
+.dot.B { background: radial-gradient(circle at 34% 30%, rgba(255,255,255,.75) 0 10%, transparent 34%), radial-gradient(circle at 38% 34%, #6a8ee0, #25429a 55%, #0f1d4f); }
+.dot.R { background: radial-gradient(circle at 34% 30%, rgba(255,255,255,.75) 0 10%, transparent 34%), radial-gradient(circle at 38% 34%, #e0735e, #9e2d22 55%, #4a110c); }
+.turn-name { font-family: var(--f-display); font-size: 1.35rem; letter-spacing: .08em; }
+.status { margin: 10px 0 0; min-height: 3em; }
+.status b { font-weight: 700; }
+.budget { display: inline-block; font-family: var(--f-mono); font-size: .9rem; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+button { font: inherit; font-weight: 500; border-radius: 8px; padding: 8px 14px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+label.toggle { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .95rem; cursor: pointer; }
+.lbl { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.lost { transition: opacity .3s; }
+.lost.zero { opacity: .4; }
+.lost.bump { animation: bump .5s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes bump { 40% { transform: scale(1.3); } }
+@media (prefers-reduced-motion: reduce) { .lost.bump { animation: none; } }
+@media (max-width: 760px) {
+  body { padding-block: 8px 24px; }
+  header.top { margin-bottom: 8px; }
+  h1 { font-size: 1.6rem; }
+  .sub { display: none; }
+  .wrap { gap: 12px; }
+  .panel { display: contents; }
+  #turnCard { order: -1; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; padding: 10px 12px; box-shadow: 0 6px 14px -10px rgba(0,0,0,.4); }
+  .boardbox { order: 0; }
+  .panel > .card:not(#turnCard) { order: 1; }
+  .turn-name { font-size: 1.1rem; }
+  .dot { width: 22px; height: 22px; }
+  .status { min-height: 0; margin: 6px 0 8px; font-size: .92rem; line-height: 1.35; }
+  button { padding: 7px 12px; font-size: .95rem; }
+  svg#board { width: min(100%, calc((100dvh - 230px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 0.62)); }
+  .boardbox { position: static; }
+}
+details summary { cursor: pointer; font-family: var(--f-display); letter-spacing: .06em; font-size: 1.05rem; }
+details ul { padding-left: 1.2em; margin: 10px 0 0; display: grid; gap: 6px; }
+.win { border-color: var(--accent); }
+</style>
+
+<header class="top">
+  <a class="back-menu" href="../index.html" data-back-nav aria-label="Menu">‹</a>
+  <h1>Esparta</h1>
+  <p class="sub" data-i18n="sub"></p>
+  <select id="selLang" class="langsel" data-i18n-aria="lang.label"></select>
+</header>
+
+<div class="wrap">
+  <div class="boardbox"><svg id="board" role="group" data-i18n-aria="board.aria"></svg></div>
+
+  <aside class="panel">
+    <section class="card" id="turnCard">
+      <div class="turn"><span class="dot" id="turnDot" aria-hidden="true"></span><span class="turn-name" id="turnName" aria-live="polite"></span></div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <div class="actions">
+        <button id="btnEnd" class="primary" hidden data-i18n="btn.end"></button>
+        <button id="btnUndo" data-i18n="btn.undo"></button>
+        <button id="btnNew" data-i18n="btn.new"></button>
+      </div>
+      <div class="actions" id="confirmNew" hidden style="margin-top:10px">
+        <span data-i18n="confirm.q"></span>
+        <button id="btnNewYes" class="primary" data-i18n="confirm.yes"></button>
+        <button id="btnNewNo" data-i18n="confirm.no"></button>
+      </div>
+    </section>
+
+    <section class="card" id="modeCard">
+      <p class="lbl" data-i18n="mode.title"></p>
+      <div class="modes">
+        <label for="selMode"><span data-i18n="mode.vs"></span> <select id="selMode"><option value="due" data-i18n="mode.due"></option><option value="cpu" data-i18n="mode.cpu"></option></select></label>
+        <label for="selSide" id="lblSide"><span data-i18n="side.lbl"></span> <select id="selSide"><option value="B" data-i18n="side.B"></option><option value="R" data-i18n="side.R"></option></select></label>
+        <label for="selLevel" id="lblLevel"><span data-i18n="level.lbl"></span> <select id="selLevel"><option value="facile" data-i18n="level.facile"></option><option value="medio" data-i18n="level.medio"></option><option value="difficile" data-i18n="level.difficile"></option></select></label>
+      </div>
+      <label class="toggle" style="margin-top:14px"><input type="checkbox" id="showGroups"> <span data-i18n="show.groups"></span></label>
+      <label class="toggle" style="margin-top:8px"><input type="checkbox" id="optHaptics" checked> <span data-i18n="opt.haptics"></span></label>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary data-i18n="rules.title"></summary>
+        <ul>
+          <li data-i18n-html="rules.1"></li>
+          <li data-i18n-html="rules.2"></li>
+          <li data-i18n-html="rules.3"></li>
+          <li data-i18n-html="rules.4"></li>
+          <li data-i18n-html="rules.5"></li>
+          <li data-i18n-html="rules.6"></li>
+          <li data-i18n-html="rules.7"></li>
+          <li data-i18n-html="rules.8"></li>
+        </ul>
+      </details>
+    </section>
+  </aside>
+</div>
+
+<script>
+// Lingue dell'interfaccia: IT (fonte), PT-BR, EN, ES. build.js lo incorpora inline (niente fetch: funziona da file:// e come artifact).
+// Uso: I18N.t('chiave', {var}) · elementi con data-i18n / data-i18n-html / data-i18n-aria / data-i18n-title · <select id="selLang">.
+const I18N = ((STORE, DICT) => {
+  const LANGS = { it: ['it', 'Italiano'], pt: ['pt-BR', 'Português'], en: ['en', 'English'], es: ['es', 'Español'] };
+  const missing = new Set();
+  function detect() {
+    try { const s = localStorage.getItem(STORE); if (DICT[s]) return s; } catch (e) {}
+    const nav = typeof navigator !== 'undefined' ? navigator.language || (navigator.languages || [])[0] || '' : '';
+    return { pt: 'pt', es: 'es', it: 'it' }[String(nav).toLowerCase().slice(0, 2)] || 'en';
+  }
+  let lang = detect();
+  const subs = [];
+  const fmt = (s, v = {}) => typeof s === 'function' ? s(v) : s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
+  function t(k, v) {
+    const s = k in DICT[lang] ? DICT[lang][k] : DICT.it[k];
+    if (s === undefined) { missing.add(k); return k; }
+    return fmt(s, v);
+  }
+  function apply() {
+    if (typeof document === 'undefined') return;
+    const q = (sel, f) => document.querySelectorAll(sel).forEach(f);
+    q('[data-i18n]', e => { e.textContent = t(e.dataset.i18n); });
+    q('[data-i18n-html]', e => { e.innerHTML = t(e.dataset.i18nHtml); });
+    q('[data-i18n-aria]', e => e.setAttribute('aria-label', t(e.dataset.i18nAria)));
+    q('[data-i18n-title]', e => e.setAttribute('title', t(e.dataset.i18nTitle)));
+    document.title = t('doc.title');
+    document.documentElement.lang = LANGS[lang][0];
+    const s = document.getElementById('selLang');
+    if (s) s.value = lang;
+  }
+  function set(l) {
+    if (!DICT[l] || l === lang) return;
+    lang = l;
+    try { localStorage.setItem(STORE, l); } catch (e) {}
+    apply();
+    subs.forEach(f => f());
+  }
+  function mount() {
+    const s = document.getElementById('selLang');
+    if (s) {
+      s.replaceChildren(...Object.keys(LANGS).map(k => {
+        const o = document.createElement('option');
+        o.value = k; o.lang = LANGS[k][0]; o.textContent = LANGS[k][1];
+        return o;
+      }));
+      s.addEventListener('change', () => set(s.value));
+    }
+    apply();
+  }
+  return { t, set, apply, mount, onChange: f => subs.push(f), get lang() { return lang; }, DICT, missing };
+})('esparta.lingua', {
+  it: {
+    'doc.title': 'Esparta',
+    'lang.label': 'Lingua',
+    'opt.haptics': 'Vibrazione',
+    'sub': 'Spartani e Iloti · per due giocatori o contro il computer',
+    'board.aria': 'Tabellone di Esparta',
+    'btn.end': 'Termina turno',
+    'btn.undo': 'Annulla mossa',
+    'btn.new': 'Nuova partita',
+    'confirm.q': 'Ricominciare da capo?',
+    'confirm.yes': 'Sì, nuova partita',
+    'confirm.no': 'No',
+    'mode.title': 'Opzioni',
+    'mode.vs': 'Gioca contro',
+    'mode.due': "un'altra persona",
+    'mode.cpu': 'il computer',
+    'side.lbl': 'Tu sei',
+    'side.B': 'il Blu (inizi tu)',
+    'side.R': 'il Rosso',
+    'level.lbl': 'Livello',
+    'level.facile': 'facile',
+    'level.medio': 'medio',
+    'level.difficile': 'difficile',
+    'cap.title': ({ p, n }) => `${p}: ${n === 1 ? '1 biglia persa' : n + ' biglie perse'}`,
+    'show.groups': 'Mostra su ogni biglia quanti passi può fare',
+    'log.title': 'Registro',
+    'log.empty': 'Nessuna mossa. Inizia il Blu.',
+    'rules.title': 'Regole',
+    'rules.1': 'Ognuno ha 9 biglie, schierate alle due punte del tabellone. Inizia il Blu. Puoi giocare contro un\'altra persona allo stesso schermo o contro il computer, a tre livelli.',
+    'rules.2': '<b>Gruppo</b>: le biglie, di qualunque colore, sulle 6 caselle intorno. Una biglia può fare tanti passi quante biglie ha nel gruppo; se non ne ha nessuna, 1 passo.',
+    'rules.3': 'Si va sempre in linea retta e si possono scavalcare le biglie proprie e avversarie. Non serve usare tutti i passi.',
+    'rules.4': 'Senza catturare ci si muove solo in avanti, cioè nelle due diagonali verso l\'avversario.',
+    'rules.5': 'Si cattura prendendo il posto di una biglia avversaria, in qualsiasi direzione (avanti, di lato, indietro). Una cattura per volta.',
+    'rules.6': 'Dopo una cattura si gioca ancora, con una biglia qualsiasi: si può catturare di nuovo o muoversi in avanti, oppure terminare il turno. Un movimento in avanti senza cattura chiude il turno.',
+    'rules.7': 'Vince chi occupa per primo una delle due caselle della punta avversaria, oppure cattura tutte le biglie avversarie.',
+    'rules.8': 'Chi non ha mosse possibili passa il turno.',
+    'name.B': 'Blu',
+    'name.R': 'Rosso',
+    'tag.you': ' (tu)',
+    'tag.cpu': ' (computer)',
+    'turn': 'Tocca al {p}{tag}',
+    'win': 'Vince il {p}{tag}',
+    'msg.allCaptured': 'Ha catturato tutte le biglie avversarie.',
+    'msg.reachedTip': 'Ha raggiunto la punta avversaria.',
+    'msg.youWon': '<b>Hai vinto!</b> ',
+    'msg.cpuWon': '<b>Ha vinto il computer.</b> ',
+    'cpu.thinking': 'Il computer sta pensando…',
+    'cpu.bonus': 'Il computer ha catturato e gioca ancora…',
+    'cpu.turn': 'Tocca al computer…',
+    'msg.bonus': '<b>Cattura!</b> Il {p} rigioca con una biglia qualsiasi: cattura ancora, avanza o termina il turno.',
+    'msg.sel': 'Biglia in {cell}: gruppo <span class="budget">{steps}</span>. ',
+    'steps': ({ n }) => n === 1 ? '1 passo' : `${n} passi`,
+    'msg.pickDest': 'Scegli una casella evidenziata.',
+    'msg.noMove': 'Nessuna mossa possibile per questa biglia.',
+    'msg.pick': 'Scegli una biglia da muovere.',
+    'msg.passed': 'Il {p} non aveva mosse e passa il turno. ',
+    'aria.marble': '{cell}, biglia {p}',
+    'aria.empty': '{cell}, vuota',
+    'aria.capture': ', cattura',
+    'aria.dest': ', destinazione',
+  },
+  pt: {
+    'doc.title': 'Esparta',
+    'lang.label': 'Idioma',
+    'opt.haptics': 'Vibração',
+    'sub': 'Espartanos e Hilotas · para dois jogadores ou contra o computador',
+    'board.aria': 'Tabuleiro de Esparta',
+    'btn.end': 'Encerrar a vez',
+    'btn.undo': 'Desfazer jogada',
+    'btn.new': 'Nova partida',
+    'confirm.q': 'Começar do zero?',
+    'confirm.yes': 'Sim, nova partida',
+    'confirm.no': 'Não',
+    'mode.title': 'Opções',
+    'mode.vs': 'Jogar contra',
+    'mode.due': 'outra pessoa',
+    'mode.cpu': 'o computador',
+    'side.lbl': 'Você é',
+    'side.B': 'o Azul (você começa)',
+    'side.R': 'o Vermelho',
+    'level.lbl': 'Nível',
+    'level.facile': 'fácil',
+    'level.medio': 'médio',
+    'level.difficile': 'difícil',
+    'cap.title': ({ p, n }) => `${p}: ${n === 1 ? '1 bolinha perdida' : n + ' bolinhas perdidas'}`,
+    'show.groups': 'Mostrar em cada bolinha quantos passos ela pode dar',
+    'log.title': 'Registro',
+    'log.empty': 'Nenhuma jogada. O Azul começa.',
+    'rules.title': 'Regras',
+    'rules.1': 'Cada jogador tem 9 bolinhas, posicionadas nas duas pontas do tabuleiro. O Azul começa. Dá para jogar contra outra pessoa na mesma tela ou contra o computador, em três níveis.',
+    'rules.2': '<b>Grupo</b>: as bolinhas, de qualquer cor, que estão nas 6 casas ao redor. Uma bolinha pode andar tantos passos quantas bolinhas houver no seu grupo; se não houver nenhuma, 1 passo.',
+    'rules.3': 'Anda-se sempre em linha reta, e dá para pular por cima das bolinhas próprias e das adversárias. Não é preciso usar todos os passos.',
+    'rules.4': 'Sem capturar, só se anda para a frente, ou seja, pelas duas diagonais em direção ao adversário.',
+    'rules.5': 'Captura-se tomando o lugar de uma bolinha adversária, em qualquer direção (para a frente, para o lado, para trás). Uma captura por vez.',
+    'rules.6': 'Depois de uma captura, joga-se de novo, com qualquer bolinha: dá para capturar outra vez, andar para a frente ou encerrar a vez. Um movimento para a frente sem captura encerra a vez.',
+    'rules.7': 'Vence quem ocupar primeiro uma das duas casas da ponta adversária, ou capturar todas as bolinhas adversárias.',
+    'rules.8': 'Quem não tiver nenhuma jogada possível passa a vez.',
+    'name.B': 'Azul',
+    'name.R': 'Vermelho',
+    'tag.you': ' (você)',
+    'tag.cpu': ' (computador)',
+    'turn': 'Vez do {p}{tag}',
+    'win': 'Vence o {p}{tag}',
+    'msg.allCaptured': 'Capturou todas as bolinhas adversárias.',
+    'msg.reachedTip': 'Chegou à ponta adversária.',
+    'msg.youWon': '<b>Você venceu!</b> ',
+    'msg.cpuWon': '<b>O computador venceu.</b> ',
+    'cpu.thinking': 'O computador está pensando…',
+    'cpu.bonus': 'O computador capturou e joga de novo…',
+    'cpu.turn': 'Vez do computador…',
+    'msg.bonus': '<b>Captura!</b> O {p} joga de novo com qualquer bolinha: captura outra vez, avança ou encerra a vez.',
+    'msg.sel': 'Bolinha em {cell}: grupo <span class="budget">{steps}</span>. ',
+    'steps': ({ n }) => n === 1 ? '1 passo' : `${n} passos`,
+    'msg.pickDest': 'Escolha uma casa destacada.',
+    'msg.noMove': 'Nenhuma jogada possível para esta bolinha.',
+    'msg.pick': 'Escolha uma bolinha para mover.',
+    'msg.passed': 'O {p} não tinha jogadas e passou a vez. ',
+    'aria.marble': '{cell}, bolinha do {p}',
+    'aria.empty': '{cell}, vazia',
+    'aria.capture': ', captura',
+    'aria.dest': ', destino',
+  },
+  en: {
+    'doc.title': 'Esparta',
+    'lang.label': 'Language',
+    'opt.haptics': 'Vibration',
+    'sub': 'Spartans and Helots · for two players or against the computer',
+    'board.aria': 'Esparta board',
+    'btn.end': 'End turn',
+    'btn.undo': 'Undo move',
+    'btn.new': 'New game',
+    'confirm.q': 'Start over?',
+    'confirm.yes': 'Yes, new game',
+    'confirm.no': 'No',
+    'mode.title': 'Options',
+    'mode.vs': 'Play against',
+    'mode.due': 'another person',
+    'mode.cpu': 'the computer',
+    'side.lbl': 'You are',
+    'side.B': 'Blue (you start)',
+    'side.R': 'Red',
+    'level.lbl': 'Level',
+    'level.facile': 'easy',
+    'level.medio': 'medium',
+    'level.difficile': 'hard',
+    'cap.title': ({ p, n }) => `${p}: ${n === 1 ? '1 marble lost' : n + ' marbles lost'}`,
+    'show.groups': 'Show on each marble how many steps it can take',
+    'log.title': 'Move log',
+    'log.empty': 'No moves yet. Blue starts.',
+    'rules.title': 'Rules',
+    'rules.1': 'Each player has 9 marbles, lined up at the two tips of the board. Blue starts. You can play against another person on the same screen or against the computer, at three levels.',
+    'rules.2': '<b>Group</b>: the marbles, of either color, on the 6 surrounding spaces. A marble may take as many steps as there are marbles in its group; if there are none, 1 step.',
+    'rules.3': 'Marbles always move in a straight line and may jump over their own and the opponent\'s marbles. You don\'t have to use all the steps.',
+    'rules.4': 'Without capturing you may only move forward, that is, along the two diagonals towards the opponent.',
+    'rules.5': 'You capture by taking the place of an opponent\'s marble, in any direction (forward, sideways, backward). One capture at a time.',
+    'rules.6': 'After a capture you play again, with any marble: you can capture again, move forward or end your turn. A forward move without a capture ends the turn.',
+    'rules.7': 'The winner is the first to occupy one of the two spaces at the opponent\'s tip, or to capture all the opponent\'s marbles.',
+    'rules.8': 'A player with no possible moves passes.',
+    'name.B': 'Blue',
+    'name.R': 'Red',
+    'tag.you': ' (you)',
+    'tag.cpu': ' (computer)',
+    'turn': '{p} to play{tag}',
+    'win': '{p} wins{tag}',
+    'msg.allCaptured': 'Captured all the opponent\'s marbles.',
+    'msg.reachedTip': 'Reached the opponent\'s tip.',
+    'msg.youWon': '<b>You won!</b> ',
+    'msg.cpuWon': '<b>The computer won.</b> ',
+    'cpu.thinking': 'The computer is thinking…',
+    'cpu.bonus': 'The computer captured and plays again…',
+    'cpu.turn': 'Computer\'s turn…',
+    'msg.bonus': '<b>Capture!</b> {p} plays again with any marble: capture again, move forward or end the turn.',
+    'msg.sel': 'Marble on {cell}: group <span class="budget">{steps}</span>. ',
+    'steps': ({ n }) => n === 1 ? '1 step' : `${n} steps`,
+    'msg.pickDest': 'Choose a highlighted space.',
+    'msg.noMove': 'This marble has no possible moves.',
+    'msg.pick': 'Choose a marble to move.',
+    'msg.passed': '{p} had no moves and passed. ',
+    'aria.marble': '{cell}, {p} marble',
+    'aria.empty': '{cell}, empty',
+    'aria.capture': ', capture',
+    'aria.dest': ', destination',
+  },
+  es: {
+    'doc.title': 'Esparta',
+    'lang.label': 'Idioma',
+    'opt.haptics': 'Vibración',
+    'sub': 'Espartanos e Ilotas · para dos jugadores o contra la computadora',
+    'board.aria': 'Tablero de Esparta',
+    'btn.end': 'Terminar turno',
+    'btn.undo': 'Deshacer jugada',
+    'btn.new': 'Nueva partida',
+    'confirm.q': '¿Empezar de nuevo?',
+    'confirm.yes': 'Sí, nueva partida',
+    'confirm.no': 'No',
+    'mode.title': 'Opciones',
+    'mode.vs': 'Jugar contra',
+    'mode.due': 'otra persona',
+    'mode.cpu': 'la computadora',
+    'side.lbl': 'Eres',
+    'side.B': 'el Azul (empiezas tú)',
+    'side.R': 'el Rojo',
+    'level.lbl': 'Nivel',
+    'level.facile': 'fácil',
+    'level.medio': 'medio',
+    'level.difficile': 'difícil',
+    'cap.title': ({ p, n }) => `${p}: ${n === 1 ? '1 canica perdida' : n + ' canicas perdidas'}`,
+    'show.groups': 'Mostrar en cada canica cuántos pasos puede dar',
+    'log.title': 'Registro',
+    'log.empty': 'Ninguna jugada. Empieza el Azul.',
+    'rules.title': 'Reglas',
+    'rules.1': 'Cada jugador tiene 9 canicas, colocadas en las dos puntas del tablero. Empieza el Azul. Puedes jugar contra otra persona en la misma pantalla o contra la computadora, en tres niveles.',
+    'rules.2': '<b>Grupo</b>: las canicas, de cualquier color, que hay en las 6 casillas de alrededor. Una canica puede avanzar tantos pasos como canicas tenga en su grupo; si no tiene ninguna, 1 paso.',
+    'rules.3': 'Siempre se avanza en línea recta y se puede saltar por encima de las canicas propias y de las rivales. No hace falta usar todos los pasos.',
+    'rules.4': 'Sin capturar solo se puede avanzar, es decir, por las dos diagonales hacia el rival.',
+    'rules.5': 'Se captura ocupando el lugar de una canica rival, en cualquier dirección (adelante, de lado, atrás). Una captura cada vez.',
+    'rules.6': 'Después de una captura se vuelve a jugar, con cualquier canica: se puede capturar otra vez, avanzar o terminar el turno. Un avance sin captura termina el turno.',
+    'rules.7': 'Gana quien ocupe primero una de las dos casillas de la punta rival, o capture todas las canicas rivales.',
+    'rules.8': 'Quien no tenga ninguna jugada posible pasa el turno.',
+    'name.B': 'Azul',
+    'name.R': 'Rojo',
+    'tag.you': ' (tú)',
+    'tag.cpu': ' (computadora)',
+    'turn': 'Turno del {p}{tag}',
+    'win': 'Gana el {p}{tag}',
+    'msg.allCaptured': 'Capturó todas las canicas rivales.',
+    'msg.reachedTip': 'Llegó a la punta rival.',
+    'msg.youWon': '<b>¡Ganaste!</b> ',
+    'msg.cpuWon': '<b>Ganó la computadora.</b> ',
+    'cpu.thinking': 'La computadora está pensando…',
+    'cpu.bonus': 'La computadora capturó y vuelve a jugar…',
+    'cpu.turn': 'Turno de la computadora…',
+    'msg.bonus': '<b>¡Captura!</b> El {p} vuelve a jugar con cualquier canica: puede capturar otra vez, avanzar o terminar el turno.',
+    'msg.sel': 'Canica en {cell}: grupo <span class="budget">{steps}</span>. ',
+    'steps': ({ n }) => n === 1 ? '1 paso' : `${n} pasos`,
+    'msg.pickDest': 'Elige una casilla resaltada.',
+    'msg.noMove': 'Esta canica no tiene jugadas posibles.',
+    'msg.pick': 'Elige una canica para mover.',
+    'msg.passed': 'El {p} no tenía jugadas y pasó el turno. ',
+    'aria.marble': '{cell}, canica del {p}',
+    'aria.empty': '{cell}, vacía',
+    'aria.capture': ', captura',
+    'aria.dest': ', destino',
+  },
+});
+if (typeof module !== 'undefined') module.exports = I18N;
+
+</script>
+<script id="engine">
+// ESPARTA — motore di regole (funzioni pure, senza DOM)
+const Esparta = (() => {
+  const ROWS = [2, 3, 4, 5, 6, 7, 8, 7, 8, 7, 6, 5, 4, 3, 2];
+  const LAST = ROWS.length - 1;
+  const BLU = 'B', ROSSO = 'R';
+
+  // Coordinate a x raddoppiata: vicini = (±2,0), (±1,±1)
+  const cells = [];
+  ROWS.forEach((n, y) => {
+    for (let i = 0; i < n; i++) cells.push({ x: -(n - 1) + 2 * i, y });
+  });
+  const key = (x, y) => x + ',' + y;
+  const index = new Map(cells.map((c, i) => [key(c.x, c.y), i]));
+  const at = (x, y) => index.has(key(x, y)) ? index.get(key(x, y)) : -1;
+
+  const DIRS = [[2, 0], [-2, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+  const forwardDirs = p => p === BLU ? [[1, 1], [-1, 1]] : [[1, -1], [-1, -1]];
+  const isForward = (p, d) => forwardDirs(p).some(f => f[0] === d[0] && f[1] === d[1]);
+  const other = p => p === BLU ? ROSSO : BLU;
+
+  const neighbors = i => DIRS.map(([dx, dy]) => at(cells[i].x + dx, cells[i].y + dy)).filter(j => j >= 0);
+  const goalRow = p => p === BLU ? LAST : 0;
+
+  function initialBoard() {
+    const b = cells.map(() => null);
+    cells.forEach((c, i) => {
+      if (c.y <= 2) b[i] = BLU;
+      if (c.y >= LAST - 2) b[i] = ROSSO;
+    });
+    return b;
+  }
+
+  function budget(board, i) {
+    const g = neighbors(i).filter(j => board[j]).length;
+    return g === 0 ? 1 : g;
+  }
+
+  // Segmenti legali da i: linea retta, fino a budget passi, salti liberi.
+  // Casella vuota: solo diagonali in avanti (fine turno). Avversaria: ogni direzione (cattura).
+  function segments(board, i) {
+    const p = board[i];
+    if (!p) return [];
+    const max = budget(board, i);
+    const out = [];
+    for (const d of DIRS) {
+      let { x, y } = cells[i];
+      for (let s = 1; s <= max; s++) {
+        x += d[0]; y += d[1];
+        const j = at(x, y);
+        if (j < 0) break;
+        if (board[j] === p) continue;
+        if (board[j] === null) {
+          if (isForward(p, d)) out.push({ from: i, to: j, steps: s, capture: false });
+        } else {
+          out.push({ from: i, to: j, steps: s, capture: true });
+        }
+      }
+    }
+    return out;
+  }
+
+  function newGame() {
+    return { board: initialBoard(), turn: BLU, bonus: false, winner: null, captured: { B: 0, R: 0 } };
+  }
+
+  // Mosse legali: ogni biglia del giocatore di turno (anche nel turno bonus dopo una cattura)
+  function legalMoves(st) {
+    if (st.winner) return [];
+    const out = [];
+    st.board.forEach((p, i) => { if (p === st.turn) out.push(...segments(st.board, i)); });
+    return out;
+  }
+
+  function checkWinner(board) {
+    for (const p of [BLU, ROSSO]) {
+      if (cells.some((c, i) => c.y === goalRow(p) && board[i] === p)) return p;
+      if (!board.includes(other(p))) return p;
+    }
+    return null;
+  }
+
+  function endTurn(st) {
+    const s = { ...st, bonus: false, turn: other(st.turn) };
+    // Regola provvisoria: chi non ha mosse legali passa il turno
+    if (!s.winner && legalMoves(s).length === 0) s.passed = s.turn, s.turn = other(s.turn);
+    else s.passed = null;
+    return s;
+  }
+
+  function apply(st, mv) {
+    const legal = legalMoves(st).find(m => m.from === mv.from && m.to === mv.to);
+    if (!legal) throw new Error('Mossa non legale');
+    return applyLegal(st, legal);
+  }
+
+  // Come apply, ma senza ricontrollare la mossa (per il giocatore automatico, che usa solo mosse legali)
+  function applyLegal(st, legal) {
+    const board = st.board.slice();
+    const captured = { ...st.captured };
+    if (legal.capture) captured[st.turn]++;
+    board[legal.to] = board[legal.from];
+    board[legal.from] = null;
+    let s = { ...st, board, captured, winner: checkWinner(board) };
+    if (s.winner) return { ...s, bonus: false };
+    if (legal.capture) {
+      s.bonus = true;
+      if (legalMoves(s).length === 0) s = endTurn(s);
+      return s;
+    }
+    return endTurn(s);
+  }
+
+  const label = i => String.fromCharCode(65 + cells[i].y) + (1 + (cells[i].x + ROWS[cells[i].y] - 1) / 2);
+
+  return { ROWS, LAST, BLU, ROSSO, cells, at, neighbors, budget, segments, legalMoves, newGame, apply, applyLegal, endTurn, checkWinner, label, goalRow, other };
+})();
+if (typeof module !== 'undefined') module.exports = Esparta;
+
+// ESPARTA — giocatore automatico, seconda versione (stessa interfaccia di ai.js)
+// Tavola e mosse su array tipizzati con fai/disfa; PVS con finestre d'aspirazione, tabella di
+// trasposizione Zobrist (due interi a 32 bit), mossa TT + killer + history, riduzioni delle mosse
+// tardive; ricerca di quiete che risolve le catene di catture del turno bonus prima di valutare.
+// Valutazione a termini: materiale, avanzamento, biglie attaccate e difese, arrivo alla punta,
+// corsa verso la punta in mosse (con il budget), mobilità, gruppi.
+const EspartaAI2 = (() => {
+  const E = (typeof Esparta !== 'undefined') ? Esparta : require('./engine.js');
+  const N = E.cells.length, LAST = E.LAST;
+  const WIN = 1e6, MATE = WIN - 1000;
+  // Stessa ricerca e stessa valutazione a ogni livello: cambiano tempo, profondità e l'errore controllato.
+  // margin: scelta a caso tra le mosse entro `margin` dalla migliore (sempre < valore di una biglia)
+  const LEVELS = {
+    facile: { depth: 1, ms: 100, margin: 40, slip: 0.4, slipMargin: 90 },
+    medio: { depth: 64, ms: 260, margin: 0 },
+    difficile: { depth: 64, ms: 650, margin: 0 },
+  };
+  // Interruttori della ricerca e pesi della valutazione (esposti per le prove automatiche)
+  const CFG = {
+    pvs: true, asp: 60, lmr: true, nmp: false, delta: false, qdepth: 12, capEps: 40,
+    W: { piece: 100, adv: 0.2, near: 44, attU: 100, attD: 95, fix: 0, watk: 8, goal1: 860, goal2: 1800, mob: 0, grp: 23, race: 10 },
+  };
+
+  // --- Geometria precalcolata -------------------------------------------------
+  const DIRS = [[2, 0], [-2, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+  const RAY = [], NB = [], Y = new Int8Array(N);
+  for (let i = 0; i < N; i++) {
+    Y[i] = E.cells[i].y;
+    NB.push(Int8Array.from(E.neighbors(i)));
+    RAY.push(DIRS.map(([dx, dy]) => {
+      const r = []; let x = E.cells[i].x, y = E.cells[i].y;
+      for (;;) { x += dx; y += dy; const j = E.at(x, y); if (j < 0) break; r.push(j); }
+      return Int8Array.from(r);
+    }));
+  }
+  // lato 1 = Blu (avanza verso y crescenti), 2 = Rosso
+  const GOALY = [0, LAST, 0];
+  const isFwd = (side, d) => side === 1 ? (d === 2 || d === 3) : (d === 4 || d === 5);
+  const adv = (side, y) => side === 1 ? y : LAST - y;
+
+  let seed = 0x2545F491;
+  const rnd = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return seed | 0; };
+  const ZA = new Int32Array(N * 3), ZB = new Int32Array(N * 3);
+  for (let k = 0; k < N * 3; k++) { ZA[k] = rnd(); ZB[k] = rnd(); }
+  const ZSIDE_A = rnd(), ZSIDE_B = rnd(), ZBON_A = rnd(), ZBON_B = rnd();
+
+  // --- Stato interno ----------------------------------------------------------
+  const b = new Int8Array(N);
+  const cnt = new Int32Array(3);
+  let hA = 0, hB = 0;
+
+  function load(st) {
+    cnt[1] = cnt[2] = 0; hA = hB = 0;
+    for (let i = 0; i < N; i++) {
+      const v = st.board[i] === E.BLU ? 1 : st.board[i] === E.ROSSO ? 2 : 0;
+      b[i] = v;
+      if (v) { cnt[v]++; hA ^= ZA[i * 3 + v]; hB ^= ZB[i * 3 + v]; }
+    }
+  }
+
+  const budget = i => { let g = 0; const nb = NB[i]; for (let k = 0; k < nb.length; k++) if (b[nb[k]]) g++; return g || 1; };
+
+  // Mossa codificata: from | to<<7 | cattura<<14; END = «termina turno» nel bonus
+  const CAP = 1 << 14, END = 1 << 15;
+  const MAXPLY = 96;
+  const MOVES = Array.from({ length: MAXPLY + 2 }, () => new Int32Array(512));
+  const SCORES = Array.from({ length: MAXPLY + 2 }, () => new Int32Array(512));
+
+  // mode 0 = tutte, 1 = solo catture e arrivi alla punta
+  function gen(side, buf, mode) {
+    let n = 0;
+    const gy = GOALY[side];
+    for (let i = 0; i < N; i++) {
+      if (b[i] !== side) continue;
+      const max = budget(i), rays = RAY[i];
+      for (let d = 0; d < 6; d++) {
+        const r = rays[d], lim = r.length < max ? r.length : max, fw = isFwd(side, d);
+        for (let s = 0; s < lim; s++) {
+          const j = r[s], v = b[j];
+          if (v === side) continue;
+          if (v === 0) { if (fw && (mode === 0 || Y[j] === gy)) buf[n++] = i | (j << 7); }
+          else buf[n++] = i | (j << 7) | CAP;
+        }
+      }
+    }
+    return n;
+  }
+
+  function hasMove(side) {
+    for (let i = 0; i < N; i++) {
+      if (b[i] !== side) continue;
+      const max = budget(i), rays = RAY[i];
+      for (let d = 0; d < 6; d++) {
+        const r = rays[d], lim = r.length < max ? r.length : max, fw = isFwd(side, d);
+        for (let s = 0; s < lim; s++) { const v = b[r[s]]; if (v === side) continue; if (v || fw) return true; }
+      }
+    }
+    return false;
+  }
+
+  function make(m, side) {
+    const f = m & 127, t = (m >> 7) & 127, c = b[t];
+    if (c) { cnt[c]--; hA ^= ZA[t * 3 + c]; hB ^= ZB[t * 3 + c]; }
+    hA ^= ZA[f * 3 + side] ^ ZA[t * 3 + side]; hB ^= ZB[f * 3 + side] ^ ZB[t * 3 + side];
+    b[t] = side; b[f] = 0;
+    return c;
+  }
+  function unmake(m, side, c) {
+    const f = m & 127, t = (m >> 7) & 127;
+    hA ^= ZA[f * 3 + side] ^ ZA[t * 3 + side]; hB ^= ZB[f * 3 + side] ^ ZB[t * 3 + side];
+    b[f] = side; b[t] = c;
+    if (c) { cnt[c]++; hA ^= ZA[t * 3 + c]; hB ^= ZB[t * 3 + c]; }
+  }
+  const wins = (m, side) => Y[(m >> 7) & 127] === GOALY[side] || cnt[3 - side] === 0;
+
+  // --- Valutazione -------------------------------------------------------------
+  // Una scansione per lato: celle raggiungibili (difesa), biglie avversarie attaccabili,
+  // arrivi alla punta in una mossa, mobilità, corsa (mosse stimate per arrivare), gruppi.
+  const REACH = [null, new Int8Array(N), new Int8Array(N)];
+  const ADVT = new Float64Array(15);
+  let scanAtt = 0, scanGoal = 0, scanMob = 0, scanRace = 0, scanGrp = 0;
+  function scan(side) {
+    const reach = REACH[side];
+    reach.fill(0);
+    let att = 0, goal = 0, mob = 0, race = 99, grp = 0;
+    const gy = GOALY[side];
+    for (let i = 0; i < N; i++) {
+      if (b[i] !== side) continue;
+      const nb = NB[i]; let g = 0, own = 0;
+      for (let k = 0; k < nb.length; k++) { const v = b[nb[k]]; if (v) { g++; if (v === side) own++; } }
+      const max = g || 1, rays = RAY[i];
+      grp += own;
+      const rem = LAST - adv(side, Y[i]);
+      const turns = rem <= max ? 1 : 1 + Math.ceil((rem - max) / 2);
+      if (turns < race) race = turns;
+      let reaches = false;
+      for (let d = 0; d < 6; d++) {
+        const r = rays[d], lim = r.length < max ? r.length : max, fw = isFwd(side, d);
+        for (let s = 0; s < lim; s++) {
+          const j = r[s], v = b[j];
+          reach[j] = 1;
+          if (v === side) continue;
+          if (v === 0) { if (fw) { mob++; if (Y[j] === gy) reaches = true; } }
+          else { att++; mob++; if (Y[j] === gy) reaches = true; }
+        }
+      }
+      if (reaches) goal++;
+    }
+    scanAtt = att; scanGoal = goal; scanMob = mob; scanRace = race; scanGrp = grp;
+  }
+
+  function evalSide(side) {
+    const W = CFG.W, opp = 3 - side;
+    let s = (cnt[side] - cnt[opp]) * W.piece;
+    for (let i = 0; i < N; i++) {
+      const v = b[i]; if (!v) continue;
+      const a = adv(v, Y[i]);
+      const x = ADVT[a];
+      s += v === side ? x : -x;
+    }
+    scan(side);
+    const myMob = scanMob, myRace = scanRace, myGrp = scanGrp, myAtt = scanAtt;
+    scan(opp);
+    const opMob = scanMob, opRace = scanRace, opGrp = scanGrp, opGoal = scanGoal;
+    // Nostre biglie attaccate: difese (ricattura possibile) o no; una la sistemiamo con la prossima mossa
+    const reachOpp = REACH[opp], reachMe = REACH[side];
+    let tot = 0, worst = 0;
+    for (let i = 0; i < N; i++) {
+      if (b[i] !== side || !reachOpp[i]) continue;
+      // reachOpp segna anche celle solo «scavalcate»: verifichiamo che sia una cattura vera
+      if (!attackedBy(i, opp)) continue;
+      const c = reachMe[i] ? W.attD : W.attU;
+      tot += c; if (c > worst) worst = c;
+    }
+    s -= tot - worst * W.fix;
+    s += W.watk * myAtt;
+    if (opGoal) s -= opGoal >= 2 ? W.goal2 : W.goal1;
+    s += W.mob * (myMob - opMob) + W.grp * (myGrp - opGrp);
+    if (W.race) { let dr = opRace - myRace + 1; if (dr > 4) dr = 4; if (dr < -4) dr = -4; s += W.race * dr; }
+    return s | 0;
+  }
+  function attackedBy(i, opp) {
+    for (let d = 0; d < 6; d++) {
+      const r = RAY[i][d];
+      for (let s = 0; s < r.length; s++) { const j = r[s]; if (b[j] === opp && budget(j) > s) return true; }
+    }
+    return false;
+  }
+  function setup() {
+    const W = CFG.W;
+    for (let a = 0; a < 15; a++) ADVT[a] = a * a * W.adv + (a >= 9 ? W.near * (a - 8) : 0);
+  }
+
+  // --- Tabella di trasposizione -----------------------------------------------
+  const TTBITS = 18, TTSIZE = 1 << TTBITS, TTMASK = TTSIZE - 1;
+  const ttKey = new Int32Array(TTSIZE), ttVal = new Int32Array(TTSIZE), ttMove = new Int32Array(TTSIZE);
+  const ttDepth = new Int8Array(TTSIZE), ttFlag = new Int8Array(TTSIZE);
+  const EXACT = 1, LOWER = 2, UPPER = 3;
+  const killers = Array.from({ length: MAXPLY + 2 }, () => new Int32Array(2));
+  const history = new Int32Array(1 << 14);
+
+  // --- Ricerca ------------------------------------------------------------------
+  class Timeout extends Error {}
+  let deadline = 0, nodes = 0;
+  const tick = () => { if ((++nodes & 1023) === 0 && Date.now() > deadline) throw new Timeout(); };
+  const nextSide = side => hasMove(3 - side) ? 3 - side : side;
+
+  function qsearch(side, bonus, alpha, beta, ply, qd) {
+    tick();
+    let best;
+    if (bonus) {
+      // Fermarsi nel bonus = «termina turno»: l'avversario può catturare a sua volta
+      const ns = nextSide(side);
+      best = qd <= 0 ? (ns === side ? evalSide(side) : -evalSide(ns))
+        : (ns === side ? qsearch(side, false, alpha, beta, ply + 1, qd - 1) : -qsearch(ns, false, -beta, -alpha, ply + 1, qd - 1));
+    } else best = evalSide(side);
+    if (best >= beta || qd <= 0 || ply >= MAXPLY) return best;
+    if (best > alpha) alpha = best;
+    const deltaCut = CFG.delta && !bonus && best + CFG.W.piece * 2 < alpha;
+    const buf = MOVES[ply], sc = SCORES[ply];
+    const n = gen(side, buf, 1);
+    for (let k = 0; k < n; k++) { const t = (buf[k] >> 7) & 127; sc[k] = Y[t] === GOALY[side] ? 1e6 : adv(3 - side, Y[t]) * 10 - budget(buf[k] & 127); }
+    for (let k = 0; k < n; k++) {
+      let bi = k; for (let q = k + 1; q < n; q++) if (sc[q] > sc[bi]) bi = q;
+      const m = buf[bi]; buf[bi] = buf[k]; buf[k] = m; const tmp = sc[bi]; sc[bi] = sc[k]; sc[k] = tmp;
+      if (deltaCut && sc[k] < 1e6) break;
+      const c = make(m, side);
+      const v = wins(m, side) ? WIN - ply - 1 : qsearch(side, true, alpha, beta, ply + 1, qd - 1);
+      unmake(m, side, c);
+      if (v > best) { best = v; if (v > alpha) { alpha = v; if (v >= beta) break; } }
+    }
+    return best;
+  }
+
+  // Valore della scelta m (già eseguita se non END) dal punto di vista di `side`
+  function child(m, c, side, depth, alpha, beta, ply) {
+    if (m !== END && wins(m, side)) return WIN - ply - 1;
+    if (c) return search(side, true, depth, alpha, beta, ply + 1);
+    const ns = nextSide(side);
+    return ns === side ? search(side, false, depth, alpha, beta, ply + 1) : -search(ns, false, depth, -beta, -alpha, ply + 1);
+  }
+
+  function search(side, bonus, depth, alpha, beta, ply) {
+    if (depth <= 0 || ply >= MAXPLY - 24) return qsearch(side, bonus, alpha, beta, ply, CFG.qdepth);
+    tick();
+    const hi = (hA ^ (side === 2 ? ZSIDE_A : 0) ^ (bonus ? ZBON_A : 0)) & TTMASK;
+    const hk = hB ^ (side === 2 ? ZSIDE_B : 0) ^ (bonus ? ZBON_B : 0);
+    let ttm = 0;
+    if (ttKey[hi] === hk && ttFlag[hi]) {
+      ttm = ttMove[hi];
+      if (ttDepth[hi] >= depth) {
+        const v = ttVal[hi], f = ttFlag[hi];
+        if (f === EXACT || (f === LOWER && v >= beta) || (f === UPPER && v <= alpha)) return v;
+      }
+    }
+    const pvNode = beta - alpha > 1;
+    // Mossa nulla (prova): passare il turno all'avversario con profondità ridotta
+    if (CFG.nmp && !bonus && !pvNode && depth >= 3 && Math.abs(beta) < MATE && evalSide(side) >= beta) {
+      const v = -search(3 - side, false, depth - 3, -beta, -beta + 1, ply + 1);
+      if (v >= beta) return v;
+    }
+    const buf = MOVES[ply], sc = SCORES[ply];
+    let n = gen(side, buf, 0);
+    if (bonus) buf[n++] = END;
+    if (n === 0) return evalSide(side);
+    const k0 = killers[ply][0], k1 = killers[ply][1];
+    for (let k = 0; k < n; k++) {
+      const m = buf[k];
+      if (m === ttm) sc[k] = 1 << 30;
+      else if (m === END) sc[k] = 500000;
+      else {
+        const t = (m >> 7) & 127;
+        if (Y[t] === GOALY[side]) sc[k] = 1 << 29;
+        else if (m & CAP) sc[k] = 1000000 + adv(3 - side, Y[t]) * 100 - budget(m & 127);
+        else if (m === k0) sc[k] = 900000;
+        else if (m === k1) sc[k] = 800000;
+        else sc[k] = history[m & 16383];
+      }
+    }
+    const a0 = alpha;
+    let best = -Infinity, bestM = 0;
+    for (let k = 0; k < n; k++) {
+      let bi = k; for (let q = k + 1; q < n; q++) if (sc[q] > sc[bi]) bi = q;
+      const m = buf[bi]; buf[bi] = buf[k]; buf[k] = m; const ms = sc[bi]; sc[bi] = sc[k]; sc[k] = ms;
+      const c = m === END ? 0 : make(m, side);
+      let v;
+      {
+        if (!CFG.pvs || k === 0) v = child(m, c, side, depth - 1, alpha, beta, ply);
+        else {
+          // mosse tranquille tardive: prima a profondità ridotta
+          let r = 0;
+          if (CFG.lmr && !bonus && depth >= 3 && k >= 3 && ms < 800000 && m !== END) r = k >= 8 && depth >= 5 ? 2 : 1;
+          v = child(m, c, side, depth - 1 - r, alpha, alpha + 1, ply);
+          if (v > alpha && r) v = child(m, c, side, depth - 1, alpha, alpha + 1, ply);
+          if (v > alpha && v < beta) v = child(m, c, side, depth - 1, alpha, beta, ply);
+        }
+      }
+      if (m !== END) unmake(m, side, c); // dopo un Timeout la tavola si ricarica in choose
+      if (v > best) {
+        best = v; bestM = m;
+        if (v > alpha) {
+          alpha = v;
+          if (v >= beta) {
+            if (m !== END && !(m & CAP)) {
+              if (killers[ply][0] !== m) { killers[ply][1] = killers[ply][0]; killers[ply][0] = m; }
+              history[m & 16383] += depth * depth;
+            }
+            break;
+          }
+        }
+      }
+    }
+    ttKey[hi] = hk; ttVal[hi] = best; ttMove[hi] = bestM; ttDepth[hi] = depth;
+    ttFlag[hi] = best <= a0 ? UPPER : best >= beta ? LOWER : EXACT;
+    return best;
+  }
+
+  function rootValue(m, side, depth, alpha, beta) {
+    const c = m === END ? 0 : make(m, side);
+    try { return child(m, c, side, depth - 1, alpha, beta, 0); }
+    finally { if (m !== END) unmake(m, side, c); }
+  }
+
+  // Un'iterazione alla radice: PVS; con margine servono i valori di tutte le scelte vicine alla migliore
+  function rootIter(list, side, d, lo, hi, margin) {
+    let alpha = lo, best = -Infinity;
+    const res = [];
+    for (let k = 0; k < list.length; k++) {
+      const x = list[k];
+      let v;
+      if (margin > 0) {
+        const a = best === -Infinity ? lo : Math.max(lo, best - margin - 1);
+        v = rootValue(x.m, side, d, a, hi);
+      } else if (k === 0 || !CFG.pvs) v = rootValue(x.m, side, d, alpha, hi);
+      else {
+        v = rootValue(x.m, side, d, alpha, alpha + 1);
+        if (v > alpha && v < hi) v = rootValue(x.m, side, d, alpha, hi);
+      }
+      res.push({ o: x.o, m: x.m, v });
+      if (v > best) best = v;
+      if (v > alpha) alpha = v;
+      if (alpha >= hi) break;
+    }
+    for (let k = res.length; k < list.length; k++) res.push({ o: list[k].o, m: list[k].m, v: -Infinity });
+    return { res: res.sort((p, q) => q.v - p.v), best };
+  }
+
+  function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // Restituisce la scelta migliore: un segmento di Esparta.legalMoves oppure { end: true }
+  function choose(st, level = 'medio') {
+    const L = LEVELS[level] || LEVELS.medio;
+    const t0 = Date.now();
+    const legal = E.legalMoves(st);
+    const opts = legal.slice();
+    if (st.bonus) opts.push({ end: true });
+    choose.last = { depth: 0, nodes: 0, ms: 0, value: 0 };
+    if (opts.length <= 1) return opts[0] || null;
+    setup(); load(st);
+    const side = st.turn === E.BLU ? 1 : 2;
+    const enc = o => o.end ? END : (o.from | (o.to << 7) | (o.capture ? CAP : 0));
+    for (const o of legal) { const m = enc(o); const c = make(m, side); const w = wins(m, side); unmake(m, side, c); if (w) return o; }
+    let list = shuffle(opts.map(o => ({ o, m: enc(o), v: 0 })));
+    list.sort((x, y) => ((y.m & CAP) ? 1 : 0) - ((x.m & CAP) ? 1 : 0));
+    deadline = t0 + L.ms; nodes = 0;
+    for (const k of killers) k.fill(0);
+    for (let i = 0; i < history.length; i++) history[i] >>= 2;
+    const margin = Math.max(L.margin || 0, L.slip ? L.slipMargin : 0);
+    let done = null, doneDepth = 0, prev = 0;
+    for (let d = 1; d <= L.depth; d++) {
+      try {
+        let r;
+        if (CFG.asp && d >= 3 && !margin && Math.abs(prev) < MATE) {
+          r = rootIter(list, side, d, prev - CFG.asp, prev + CFG.asp, 0);
+          if (r.best <= prev - CFG.asp || r.best >= prev + CFG.asp) r = rootIter(r.best >= prev + CFG.asp ? r.res : list, side, d, -Infinity, Infinity, 0);
+        } else r = rootIter(list, side, d, -Infinity, Infinity, margin);
+        list = r.res; done = list; doneDepth = d; prev = list[0].v;
+        if (Math.abs(prev) >= MATE) break;
+        if (Date.now() - t0 > L.ms * 0.5 && d >= 2) break; // il livello successivo non finirebbe
+      } catch (e) {
+        if (!(e instanceof Timeout)) throw e;
+        load(st);
+        break;
+      }
+    }
+    const el = Date.now() - t0;
+    choose.last = { depth: doneDepth, nodes, ms: el, nps: Math.round(nodes / Math.max(1, el) * 1000), value: done ? done[0].v : 0 };
+    if (!done) return list[0].o;
+    const bestV = done[0].v;
+    if (margin > 0 && Math.abs(bestV) < MATE) {
+      // errore controllato: di solito una mossa quasi migliore, a volte un po' peggiore, mai una biglia regalata
+      const m2 = L.slip && Math.random() < L.slip ? L.slipMargin : L.margin;
+      const pool = done.filter(x => x.v >= bestV - m2);
+      return pool[Math.random() * pool.length | 0].o;
+    }
+    // Una cattura che la ricerca giudica quasi equivalente alla mossa migliore si prende subito:
+    // rimandarla è un rischio (orizzonte) e all'avversario umano sembra un rifiuto
+    if (CFG.capEps && Math.abs(bestV) < MATE && !(done[0].m & CAP)) {
+      // i valori delle mosse non migliori sono limiti superiori: si verifica con una finestra stretta
+      const lo = bestV - CFG.capEps;
+      deadline = Date.now() + Math.max(20, L.ms * 0.3);
+      try {
+        for (const x of done) {
+          if (!(x.m & CAP) || x.v < lo) continue;
+          if (rootValue(x.m, side, doneDepth, lo - 1, bestV + 1) >= lo) return x.o;
+        }
+      } catch (e) { if (!(e instanceof Timeout)) throw e; }
+    }
+    return done[0].o;
+  }
+
+  function evaluate(st, me) {
+    if (st.winner) return st.winner === me ? WIN : -WIN;
+    setup(); load(st);
+    const side = st.turn === E.BLU ? 1 : 2;
+    const v = evalSide(side);
+    return (me === E.BLU ? 1 : 2) === side ? v : -v;
+  }
+
+  // Svuota tabella di trasposizione e history (prove ripetibili)
+  function reset() { ttKey.fill(0); ttFlag.fill(0); history.fill(0); for (const k of killers) k.fill(0); }
+
+  return { choose, evaluate, LEVELS, CFG, reset };
+})();
+if (typeof module !== 'undefined') module.exports = EspartaAI2;
+
+</script>
+<script>
+/* native.js — strato comune per i giochi (Esparta, Ire, Metamorphose).
+   Script classico, nessuna dipendenza: si incolla inline nella pagina.
+   In Capacitor (Android) usa i plugin Haptics, Preferences, Share, App tramite
+   window.Capacitor.Plugins, che il bridge Android popola da sé, senza bundler.
+   Altrove (browser, file://, artifact, Node) ripiega su API web, sempre in try/catch. */
+(function (root) {
+  'use strict';
+  var PREFIX = 'giochi:';
+
+  function cap() { return root.Capacitor; }
+  function isNative() {
+    try { var c = cap(); return !!(c && typeof c.isNativePlatform === 'function' && c.isNativePlatform()); }
+    catch (e) { return false; }
+  }
+  function plugin(name) {
+    if (!isNative()) return null;
+    var c = cap();
+    return (c.Plugins && c.Plugins[name]) || null;
+  }
+  function quiet(p) { if (p && typeof p.catch === 'function') p.catch(function () {}); return p; }
+
+  // ---------- vibrazione ----------
+  var WEB_PATTERN = { light: 10, medium: 20, heavy: 35, success: [12, 60, 12], error: [40, 50, 40, 50, 40], select: 6 };
+  var hapticsOn = true;
+  function haptic(kind) {
+    if (!hapticsOn) return;
+    kind = kind || 'light';
+    var H = plugin('Haptics');
+    try {
+      if (H) {
+        if (kind === 'success') return quiet(H.notification({ type: 'SUCCESS' }));
+        if (kind === 'error') return quiet(H.notification({ type: 'ERROR' }));
+        if (kind === 'warning') return quiet(H.notification({ type: 'WARNING' }));
+        if (kind === 'select') return quiet(H.selectionChanged ? H.selectionChanged({}) : H.impact({ style: 'LIGHT' }));
+        var style = kind === 'heavy' ? 'HEAVY' : kind === 'medium' ? 'MEDIUM' : 'LIGHT';
+        return quiet(H.impact({ style: style }));
+      }
+      var nav = root.navigator;
+      if (nav && typeof nav.vibrate === 'function') nav.vibrate(WEB_PATTERN[kind] || 10);
+    } catch (e) {}
+  }
+
+  // ---------- salvataggio ----------
+  var memory = {};
+  function webStore() { try { return root.localStorage || null; } catch (e) { return null; } }
+  async function save(key, obj) {
+    var s;
+    try { s = JSON.stringify(obj); } catch (e) { return false; }
+    var P = plugin('Preferences');
+    try {
+      if (P) { await P.set({ key: PREFIX + key, value: s }); return true; }
+    } catch (e) {}
+    memory[key] = s;
+    var ls = webStore();
+    try { if (ls) { ls.setItem(PREFIX + key, s); return true; } } catch (e) {}
+    return false;
+  }
+  async function load(key, fallback) {
+    var s = null;
+    var P = plugin('Preferences');
+    try { if (P) { var r = await P.get({ key: PREFIX + key }); s = r && r.value; } } catch (e) {}
+    if (s == null) { var ls = webStore(); try { if (ls) s = ls.getItem(PREFIX + key); } catch (e) {} }
+    if (s == null && Object.prototype.hasOwnProperty.call(memory, key)) s = memory[key];
+    if (s == null) return fallback === undefined ? null : fallback;
+    try { return JSON.parse(s); } catch (e) { return fallback === undefined ? null : fallback; }
+  }
+  async function remove(key) {
+    delete memory[key];
+    var P = plugin('Preferences');
+    try { if (P) await P.remove({ key: PREFIX + key }); } catch (e) {}
+    var ls = webStore(); try { if (ls) ls.removeItem(PREFIX + key); } catch (e) {}
+  }
+
+  // ---------- condivisione ----------
+  async function copyText(text) {
+    var nav = root.navigator;
+    try { if (nav && nav.clipboard && nav.clipboard.writeText) { await nav.clipboard.writeText(text); return true; } } catch (e) {}
+    try {
+      var d = root.document; if (!d || !d.body) return false;
+      var ta = d.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      d.body.appendChild(ta); ta.select();
+      var ok = d.execCommand && d.execCommand('copy');
+      d.body.removeChild(ta);
+      return !!ok;
+    } catch (e) { return false; }
+  }
+  // Ritorna 'shared' | 'copied' | 'cancelled' | 'failed'
+  async function share(opts) {
+    opts = opts || {};
+    var data = {};
+    if (opts.title) data.title = opts.title;
+    if (opts.text) data.text = opts.text;
+    if (opts.url) data.url = opts.url;
+    var S = plugin('Share');
+    if (S) {
+      try { await S.share(Object.assign({ dialogTitle: opts.title || undefined }, data)); return 'shared'; }
+      catch (e) { if (/cancel/i.test(String(e && (e.message || e)))) return 'cancelled'; }
+    }
+    var nav = root.navigator;
+    if (nav && typeof nav.share === 'function') {
+      try { await nav.share(data); return 'shared'; }
+      catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
+    }
+    var flat = [opts.title, opts.text, opts.url].filter(Boolean).join('\n');
+    return (await copyText(flat)) ? 'copied' : 'failed';
+  }
+
+  // ---------- ciclo di vita ----------
+  var pauseCbs = [], resumeCbs = [], lifeWired = false;
+  function fire(list) { list.slice().forEach(function (cb) { try { cb(); } catch (e) { console.error(e); } }); }
+  function wireLife() {
+    if (lifeWired) return; lifeWired = true;
+    var A = plugin('App');
+    if (A) {
+      // sul nativo solo gli eventi di App: con anche visibilitychange scatterebbero due volte
+      quiet(A.addListener('pause', function () { fire(pauseCbs); }));
+      quiet(A.addListener('resume', function () { fire(resumeCbs); }));
+      return;
+    }
+    var d = root.document;
+    if (d && d.addEventListener) {
+      d.addEventListener('visibilitychange', function () { fire(d.visibilityState === 'hidden' ? pauseCbs : resumeCbs); });
+      if (root.addEventListener) root.addEventListener('pagehide', function () { fire(pauseCbs); });
+    }
+  }
+  function onPause(cb) { pauseCbs.push(cb); wireLife(); return function () { pauseCbs = pauseCbs.filter(function (f) { return f !== cb; }); }; }
+  function onResume(cb) { resumeCbs.push(cb); wireLife(); return function () { resumeCbs = resumeCbs.filter(function (f) { return f !== cb; }); }; }
+
+  // ---------- tasto indietro (Android) ----------
+  // Pila di gestori: l'ultimo registrato viene chiamato per primo; se ritorna true l'evento è consumato.
+  // Se nessuno lo consuma: si chiude il primo dialogo aperto; altrimenti si chiede conferma di uscita.
+  var backStack = [], backWired = false, exitAsk = null;
+  var exitText = 'Uscire dal gioco?';
+  function closeOpenDialog() {
+    var d = root.document; if (!d || !d.querySelector) return false;
+    var dlg = d.querySelector('dialog[open]');
+    if (dlg) { try { dlg.close(); } catch (e) { dlg.removeAttribute('open'); } return true; }
+    var marked = d.querySelectorAll('[data-back-close]');
+    for (var i = marked.length - 1; i >= 0; i--) {
+      var el = marked[i];
+      if (!el.hidden && el.getAttribute('aria-hidden') !== 'true') {
+        var btn = el.getAttribute('data-back-close') && d.getElementById(el.getAttribute('data-back-close'));
+        if (btn && btn.click) btn.click(); else el.hidden = true;
+        return true;
+      }
+    }
+    return false;
+  }
+  function exitApp() { var A = plugin('App'); if (A) quiet(A.exitApp()); }
+  async function confirmExit() {
+    var ok;
+    if (exitAsk) { try { ok = await exitAsk(); } catch (e) { ok = false; } }
+    else { try { ok = root.confirm ? root.confirm(exitText) : true; } catch (e) { ok = true; } }
+    if (ok) exitApp();
+  }
+  // Dentro la collezione il gioco ha un link [data-back-nav] verso il menu: Indietro ci torna invece di uscire
+  function backToMenu(ev) {
+    var d = root.document; if (!d || !d.querySelector) return false;
+    var a = d.querySelector('[data-back-nav]'); if (!a) return false;
+    var h = root.history;
+    if (ev && ev.canGoBack && h && h.back) h.back(); else root.location.href = a.getAttribute('href');
+    return true;
+  }
+  function handleBack(ev) {
+    for (var i = backStack.length - 1; i >= 0; i--) {
+      try { if (backStack[i](ev) === true) return true; } catch (e) { console.error(e); }
+    }
+    if (closeOpenDialog()) return true;
+    if (backToMenu(ev)) return true;
+    confirmExit();
+    return false;
+  }
+  function wireBack() {
+    if (backWired) return; backWired = true;
+    var A = plugin('App');
+    // registrando backButton Android non esce più da solo: l'uscita passa da confirmExit() → App.exitApp()
+    if (A) quiet(A.addListener('backButton', handleBack));
+  }
+  function onBack(cb) { if (cb) backStack.push(cb); wireBack(); return function () { backStack = backStack.filter(function (f) { return f !== cb; }); }; }
+  function setExitConfirm(fnOrText) { if (typeof fnOrText === 'function') exitAsk = fnOrText; else if (fnOrText) exitText = String(fnOrText); }
+
+  // ---------- schermo acceso ----------
+  var lock = null, wantAwake = false;
+  async function keepAwake(on) {
+    wantAwake = on !== false;
+    var nav = root.navigator;
+    try {
+      if (wantAwake) {
+        if (!lock && nav && nav.wakeLock && nav.wakeLock.request) {
+          lock = await nav.wakeLock.request('screen');
+          lock.addEventListener && lock.addEventListener('release', function () { lock = null; });
+        }
+      } else if (lock) { await lock.release(); lock = null; }
+      return !!lock;
+    } catch (e) { lock = null; return false; }
+  }
+  onResume(function () { if (wantAwake) keepAwake(true); });
+
+  var Native = {
+    get isNative() { return isNative(); },
+    platform: function () { try { var c = cap(); return c && c.getPlatform ? c.getPlatform() : 'web'; } catch (e) { return 'web'; } },
+    haptic: haptic,
+    setHaptics: function (on) { hapticsOn = !!on; },
+    save: save, load: load, remove: remove,
+    share: share, copyText: copyText,
+    onPause: onPause, onResume: onResume,
+    onBack: onBack, setExitConfirm: setExitConfirm, handleBack: handleBack, exitApp: exitApp,
+    keepAwake: keepAwake,
+    _reset: function () { memory = {}; backStack = []; pauseCbs = []; resumeCbs = []; lifeWired = backWired = false; exitAsk = null; }
+  };
+  root.Native = Native;
+  if (typeof module !== 'undefined' && module.exports) module.exports = Native;
+})(typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this);
+
+/* worker.js — esegue la mossa dell'IA in un Web Worker creato da Blob URL (nessun file separato).
+   Uso:
+     const ai = NativeWorker.create({ source: [engineText], call: 'Metamorphose.bestAction', local: (s, l) => Metamorphose.bestAction(s, l) });
+     const r = await ai.run([st, level], { timeout: 8000 });   // r = { value, via: 'worker'|'main' }
+   - `source`: testo (o array di testi) che definisce le funzioni nel worker: di solito il contenuto dello
+     <script id="engine">. Una funzione serializzata con toString() perderebbe le chiusure, perciò si passa il sorgente.
+   - `call`: espressione valutata nel worker che dà la funzione da chiamare (es. 'EspartaAI.choose').
+   - `local`: la stessa funzione sul thread principale, usata se il Worker non è disponibile
+     (Node, CSP che blocca blob:, errore di avvio).
+   - argomenti e risultato devono essere clonabili (dati semplici: niente funzioni, niente istanze di classe).
+   - al timeout il worker viene terminato e la promessa è rifiutata con err.timeout = true
+     (o risolta con il valore di opts.onTimeout(), se fornito). NON si rilancia sul thread principale:
+     raddoppierebbe il blocco. */
+(function (root) {
+  'use strict';
+
+  var BOOT = '\n;(function(){var __f=(%CALL%);self.onmessage=function(e){var d=e.data;' +
+    'try{Promise.resolve(__f.apply(null,d.args)).then(function(v){self.postMessage({id:d.id,ok:true,value:v})},' +
+    'function(err){self.postMessage({id:d.id,ok:false,error:String(err&&err.stack||err)})})}' +
+    'catch(err){self.postMessage({id:d.id,ok:false,error:String(err&&err.stack||err)})}};' +
+    'self.postMessage({ready:true})})();\n';
+
+  function workerSupported() {
+    return typeof root.Worker === 'function' && typeof root.Blob === 'function' &&
+      root.URL && typeof root.URL.createObjectURL === 'function';
+  }
+
+  function defer(fn) { return new Promise(function (res, rej) { setTimeout(function () { try { res(fn()); } catch (e) { rej(e); } }, 0); }); }
+
+  function create(opts) {
+    var sources = [].concat(opts.source || []);
+    var callExpr = opts.call;
+    var local = opts.local;
+    var broken = !workerSupported() || !callExpr;
+    var w = null, url = null, seq = 0, pending = {};
+
+    function kill() {
+      if (w) { try { w.terminate(); } catch (e) {} w = null; }
+      if (url) { try { root.URL.revokeObjectURL(url); } catch (e) {} url = null; }
+    }
+    function failAll(reason) {
+      var ids = Object.keys(pending);
+      ids.forEach(function (id) { var p = pending[id]; delete pending[id]; p.fallback(reason); });
+    }
+    function spawn() {
+      if (w) return w;
+      var code = sources.join('\n;\n') + BOOT.replace('%CALL%', callExpr);
+      url = root.URL.createObjectURL(new root.Blob([code], { type: 'text/javascript' }));
+      w = new root.Worker(url);
+      w.onmessage = function (e) {
+        var d = e.data || {};
+        if (d.ready) { if (url) { try { root.URL.revokeObjectURL(url); } catch (x) {} url = null; } return; }
+        var p = pending[d.id]; if (!p) return;
+        delete pending[d.id];
+        if (d.ok) p.resolve({ value: d.value, via: 'worker' }); else p.reject(new Error(d.error));
+      };
+      w.onerror = function (e) {
+        // errore di caricamento (CSP, sintassi): il worker non è usabile, si passa al thread principale
+        if (e && e.preventDefault) e.preventDefault();
+        broken = true; kill(); failAll(e && e.message);
+      };
+      return w;
+    }
+    function runMain(args) {
+      if (typeof local !== 'function') return Promise.reject(new Error('Worker non disponibile e nessuna funzione locale'));
+      return defer(function () { return local.apply(null, args); }).then(function (v) { return { value: v, via: 'main' }; });
+    }
+
+    function run(args, o) {
+      args = args || []; o = o || {};
+      var timeout = o.timeout == null ? (opts.timeout || 10000) : o.timeout;
+      if (broken) return runMain(args);
+      return new Promise(function (resolve, reject) {
+        var id = ++seq, timer = null, settled = false;
+        function done(fn, v) { if (settled) return; settled = true; if (timer) clearTimeout(timer); fn(v); }
+        pending[id] = {
+          resolve: function (v) { done(resolve, v); },
+          reject: function (e) { done(reject, e); },
+          fallback: function () { if (settled) return; if (timer) clearTimeout(timer); runMain(args).then(function (v) { done(resolve, v); }, function (e) { done(reject, e); }); }
+        };
+        try { spawn().postMessage({ id: id, args: args }); }
+        catch (e) { broken = true; kill(); delete pending[id]; return runMain(args).then(resolve, reject); }
+        if (timeout > 0) timer = setTimeout(function () {
+          if (settled) return;
+          delete pending[id];
+          kill(); failAll('restart'); // il worker è bloccato: lo si termina, un nuovo run ne crea uno fresco
+          if (typeof o.onTimeout === 'function' || typeof opts.onTimeout === 'function') {
+            var f = o.onTimeout || opts.onTimeout;
+            try { done(resolve, { value: f(), via: 'timeout' }); } catch (e) { done(reject, e); }
+          } else { var err = new Error('IA: tempo scaduto (' + timeout + ' ms)'); err.timeout = true; done(reject, err); }
+        }, timeout);
+      });
+    }
+
+    return {
+      run: run,
+      cancel: function () { var ids = Object.keys(pending); kill(); ids.forEach(function (id) { var p = pending[id]; delete pending[id]; var e = new Error('annullato'); e.cancelled = true; p.reject(e); }); },
+      dispose: function () { this.cancel(); },
+      get usingWorker() { return !broken; }
+    };
+  }
+
+  var NativeWorker = { create: create, supported: workerSupported };
+  root.NativeWorker = NativeWorker;
+  if (root.Native) root.Native.worker = NativeWorker;
+  if (typeof module !== 'undefined' && module.exports) module.exports = NativeWorker;
+})(typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this);
+
+</script>
+<script>
+(() => {
+  const E = Esparta, NS = 'http://www.w3.org/2000/svg';
+  const U = 24, H = U * Math.sqrt(3), M = 34;
+  const svg = document.getElementById('board');
+  const W = 14 * U + 2 * M, HT = E.LAST * H + 2 * M;
+  svg.setAttribute('viewBox', `${-7 * U - M} ${-M} ${W} ${HT}`);
+  const P = i => [E.cells[i].x * U, E.cells[i].y * H];
+  const T = I18N.t, NAME = p => T('name.' + p);
+
+  const el = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+
+  // Tabellone fisso: sagoma, scanalature, incavi
+  const defs = el('defs', {}, svg);
+  for (const [id, c] of [['gB', 'var(--blu)'], ['gR', 'var(--rosso)']]) {
+    const g = el('radialGradient', { id, cx: '35%', cy: '30%', r: '75%' }, defs);
+    el('stop', { offset: '0%', 'stop-color': '#ffffff', 'stop-opacity': '.85' }, g);
+    el('stop', { offset: '22%', 'stop-color': c }, g);
+    el('stop', { offset: '100%', 'stop-color': c, 'stop-opacity': '1' }, g);
+    const g2 = el('radialGradient', { id: id + 's', cx: '50%', cy: '50%', r: '50%' }, defs);
+    el('stop', { offset: '60%', 'stop-color': '#000', 'stop-opacity': '.28' }, g2);
+    el('stop', { offset: '100%', 'stop-color': '#000', 'stop-opacity': '0' }, g2);
+  }
+  // Biglie di pietra lucida: lapislazzuli con pagliuzze di pirite (Blu) e diaspro venato (Rosso).
+  // Ogni pietra è un <symbol> di raggio 1 disegnato una volta sola e richiamato con <use>.
+  const gloss = el('radialGradient', { id: 'gloss', cx: '50%', cy: '50%', r: '50%' }, defs);
+  el('stop', { offset: '0%', 'stop-color': '#fff', 'stop-opacity': '.85' }, gloss);
+  el('stop', { offset: '100%', 'stop-color': '#fff', 'stop-opacity': '0' }, gloss);
+  const rim = el('radialGradient', { id: 'rim', cx: '50%', cy: '50%', r: '50%' }, defs);
+  el('stop', { offset: '70%', 'stop-color': '#000', 'stop-opacity': '0' }, rim);
+  el('stop', { offset: '100%', 'stop-color': '#000', 'stop-opacity': '.45' }, rim);
+  const STONE = {
+    B: { hi: '#6a8ee0', mid: '#25429a', lo: '#0f1d4f', veins: [['#9fb8f5', 2.4, 4, .55], ['#0a1438', 1.6, 9, .5]],
+      flecks: [[-.42, .18], [.31, -.38], [.48, .27], [-.12, .55], [.05, -.08], [-.55, -.22], [.22, .62]] },
+    R: { hi: '#e0735e', mid: '#9e2d22', lo: '#4a110c', veins: [['#e89a7c', 1.3, 7, .5], ['#3a0a07', 2.1, 13, .55]], flecks: [] },
+  };
+  for (const [p, s] of Object.entries(STONE)) {
+    const base = el('radialGradient', { id: 'base' + p, cx: '38%', cy: '34%', r: '70%' }, defs);
+    el('stop', { offset: '0%', 'stop-color': s.hi }, base);
+    el('stop', { offset: '55%', 'stop-color': s.mid }, base);
+    el('stop', { offset: '100%', 'stop-color': s.lo }, base);
+    const sym = el('symbol', { id: 'st' + p, viewBox: '-1 -1 2 2' }, defs);
+    el('circle', { r: 1, fill: `url(#base${p})` }, sym);
+    s.veins.forEach(([color, freq, seed, alpha], k) => {
+      // rumore frattale colorato e ritagliato sul disco: le venature della pietra
+      const f = el('filter', { id: `vein${p}${k}`, x: '-1', y: '-1', width: '2', height: '2', filterUnits: 'userSpaceOnUse', 'color-interpolation-filters': 'sRGB' }, defs);
+      el('feTurbulence', { type: 'fractalNoise', baseFrequency: freq, numOctaves: 3, seed, result: 'n' }, f);
+      const [r, g, b] = [1, 3, 5].map(i => parseInt(color.slice(i, i + 2), 16) / 255);
+      el('feColorMatrix', { in: 'n', type: 'matrix', values: `0 0 0 0 ${r}  0 0 0 0 ${g}  0 0 0 0 ${b}  ${3 * alpha} 0 0 0 ${-1.2 * alpha}`, result: 'c' }, f);
+      el('feComposite', { in: 'c', in2: 'SourceGraphic', operator: 'in' }, f);
+      el('circle', { r: 1, fill: '#fff', filter: `url(#vein${p}${k})` }, sym);
+    });
+    for (const [x, y] of s.flecks) el('circle', { cx: x, cy: y, r: .045, fill: '#e3c160', opacity: '.9' }, sym);
+    el('circle', { r: 1, fill: 'url(#rim)' }, sym);
+    el('ellipse', { cx: -.32, cy: -.4, rx: .42, ry: .26, fill: 'url(#gloss)', transform: 'rotate(-28 -.32 -.4)' }, sym);
+    el('circle', { cx: .38, cy: .46, r: .12, fill: '#fff', opacity: '.12' }, sym);
+  }
+  const stone = (p, x, y, r, parent) => el('use', { href: '#st' + p, x: x - r, y: y - r, width: 2 * r, height: 2 * r }, parent);
+  const hull = [[-1, 0], [1, 0], [7, 6], [7, 8], [1, 14], [-1, 14], [-7, 8], [-7, 6]].map(([x, y]) => `${x * U},${y * H}`).join(' ');
+  el('polygon', { points: hull, fill: 'var(--wood-edge)', stroke: 'var(--wood-edge)', 'stroke-width': 2 * M - 4, 'stroke-linejoin': 'round', transform: 'translate(0,3)' }, svg);
+  el('polygon', { points: hull, fill: 'var(--wood)', stroke: 'var(--wood)', 'stroke-width': 2 * M - 6, 'stroke-linejoin': 'round' }, svg);
+  const grooves = el('g', { stroke: 'var(--burn)', 'stroke-width': 4, 'stroke-linecap': 'round', opacity: '.75' }, svg);
+  E.cells.forEach((c, i) => E.neighbors(i).forEach(j => {
+    if (j > i) { const [a, b] = P(i), [x, y] = P(j); el('line', { x1: a, y1: b, x2: x, y2: y }, grooves); }
+  }));
+  const holes = el('g', {}, svg);
+  E.cells.forEach((c, i) => { const [x, y] = P(i); el('circle', { cx: x, cy: y, r: U * .5, fill: 'var(--burn)' }, holes); el('circle', { cx: x, cy: y + 1.5, r: U * .36, fill: 'var(--burn-deep)', opacity: '.55' }, holes); });
+  const lastLayer = el('g', {}, svg);
+  const hintLayer = el('g', {}, svg);
+  const pieceLayer = el('g', {}, svg);
+  const topLayer = el('g', {}, svg);
+  // Biglie perse: negli angoli liberi accanto alla punta di partenza di ciascun colore
+  const lost = {};
+  for (const [p, x, y] of [['B', -5.3 * U, .55 * H], ['R', -5.3 * U, 13.45 * H]]) {
+    const g = el('g', { class: 'lost', role: 'img' }, svg);
+    el('circle', { cx: x + 2, cy: y + 4, r: U * 1.05, fill: `url(#g${p}s)` }, g);
+    stone(p, x, y, U * .96, g);
+    const t = el('text', { x, y: y + 9, 'text-anchor': 'middle', 'font-family': 'Nunito Sans, Alegreya Sans, sans-serif', 'font-size': 27, 'font-weight': 700, fill: '#fff', stroke: 'rgba(0,0,0,.25)', 'stroke-width': .8 }, g);
+    g.addEventListener('animationend', () => g.classList.remove('bump'));
+    lost[p] = { g, t, n: null };
+  }
+  const hitLayer = el('g', {}, svg);
+  const hits = E.cells.map((c, i) => {
+    const [x, y] = P(i);
+    const g = el('g', { class: 'cell', 'data-i': i }, hitLayer);
+    el('circle', { class: 'hit', cx: x, cy: y, r: U * .95, fill: 'transparent', stroke: 'none' }, g);
+    g.addEventListener('click', () => onCell(i));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onCell(i); } });
+    return g;
+  });
+
+  // Stato
+  let st, hist, sel, log, last, cur;
+  const $ = id => document.getElementById(id);
+  const N = window.Native;
+  // L'IA gira in un Web Worker: lo schermo resta reattivo mentre il computer pensa
+  const ai = NativeWorker.create({ source: [$('engine').textContent], call: 'EspartaAI2.choose', local: (s, l) => EspartaAI2.choose(s, l), timeout: 8000 });
+
+  function fresh() { st = E.newGame(); hist = []; sel = null; log = []; last = null; cur = null; }
+  function snapshot() { return JSON.parse(JSON.stringify({ st, sel, log, last, cur })); }
+  function restore(s) { ({ st, sel, log, last, cur } = s); }
+
+  // Avversario: un'altra persona o il computer
+  const CFG = 'esparta.avversario.v1';
+  const cfg = { mode: 'due', human: 'B', level: 'medio' };
+  try { Object.assign(cfg, JSON.parse(localStorage.getItem(CFG)) || {}); } catch (e) {}
+  N.setHaptics(cfg.haptics !== false);
+  // gen: un risultato dell'IA arrivato dopo «Annulla» o «Nuova partita» appartiene a un'altra partita e si scarta
+  let cpuTimer = null, thinking = false, cpuBusy = false, gen = 0;
+  const cpuTurn = () => cfg.mode === 'cpu' && !st.winner && st.turn !== cfg.human;
+  function cancelCpu() { clearTimeout(cpuTimer); cpuTimer = null; thinking = false; cpuBusy = false; gen++; ai.cancel(); }
+  function scheduleCpu() {
+    if (cpuTimer || cpuBusy || !cpuTurn()) return;
+    cpuTimer = setTimeout(() => { thinking = true; render(); cpuTimer = setTimeout(cpuStep, 30); }, 450);
+  }
+  function cpuStep() {
+    cpuTimer = null;
+    if (!cpuTurn()) { thinking = false; return render(); }
+    const g = ++gen;
+    cpuBusy = true;
+    ai.run([st, cfg.level], { onTimeout: () => null }).then(({ value: m }) => {
+      if (g !== gen) return;
+      cpuBusy = false; thinking = false;
+      if (!cpuTurn()) return render();
+      if (m && !m.end) return play(m);
+      if (st.bonus) return endChain();
+      const any = E.legalMoves(st)[0];
+      return any ? play(any) : render();
+    }, err => { if (g === gen) { cpuBusy = false; thinking = false; if (!err.cancelled) console.error(err); render(); } });
+  }
+  function setCfg(k, v) {
+    cfg[k] = v;
+    try { localStorage.setItem(CFG, JSON.stringify(cfg)); } catch (e) {}
+    cancelCpu(); sel = null; render();
+  }
+
+  function onCell(i) {
+    if (st.winner || cpuTurn()) return;
+    const from = sel;
+    if (from !== null) {
+      const mv = E.legalMoves(st).find(m => m.from === from && m.to === i);
+      if (mv) return play(mv);
+    }
+    if (st.board[i] === st.turn) { sel = sel === i ? null : i; if (sel !== null) N.haptic('select'); }
+    else sel = null;
+    render();
+  }
+
+  function play(mv) {
+    hist.push(snapshot());
+    const who = st.turn;
+    if (!cur) { cur = { who, text: E.label(mv.from) }; log.push(cur); }
+    else cur.text += ' · ' + E.label(mv.from);
+    cur.text += (mv.capture ? '×' : '–') + E.label(mv.to);
+    st = E.apply(st, mv);
+    last = mv;
+    N.haptic(st.winner ? (cfg.mode === 'cpu' && st.winner !== cfg.human ? 'heavy' : 'success') : mv.capture ? 'medium' : 'light');
+    if (!st.bonus) { if (st.winner) cur.text += ' ✦'; cur = null; sel = null; }
+    else sel = null;
+    render();
+  }
+
+  function endChain() {
+    if (!st.bonus) return;
+    hist.push(snapshot());
+    st = E.endTurn(st); cur = null; sel = null;
+    render();
+  }
+
+  function render() {
+    const legal = E.legalMoves(st);
+    const active = sel;
+    const dests = active !== null ? legal.filter(m => m.from === active) : [];
+    const movable = new Set(legal.map(m => m.from));
+    const show = $('showGroups').checked;
+
+    [lastLayer, hintLayer, pieceLayer, topLayer].forEach(g => g.replaceChildren());
+
+    if (last) {
+      const [a, b] = P(last.from), [x, y] = P(last.to);
+      el('line', { x1: a, y1: b, x2: x, y2: y, stroke: 'var(--board-ink)', 'stroke-width': 3, 'stroke-dasharray': '2 7', 'stroke-linecap': 'round', opacity: '.45' }, lastLayer);
+    }
+    if (active !== null) {
+      E.neighbors(active).forEach(j => { const [x, y] = P(j); el('circle', { cx: x, cy: y, r: U * .62, fill: 'none', stroke: 'var(--board-ink)', 'stroke-width': 1.5, opacity: '.35' }, hintLayer); });
+    }
+    st.board.forEach((p, i) => {
+      if (!p) return;
+      const [x, y] = P(i);
+      el('circle', { cx: x + 2, cy: y + 4, r: U * .8, fill: `url(#g${p}s)` }, pieceLayer);
+      stone(p, x, y, U * .72, pieceLayer);
+      // Anello inciso sulle rosse: si distinguono dalle blu anche senza colori
+      if (p === 'R') el('circle', { cx: x, cy: y, r: U * .55, fill: 'none', stroke: '#fff', 'stroke-width': 1.4, opacity: '.3' }, pieceLayer);
+      if (show) {
+        const t = el('text', { x, y: y + 5, 'text-anchor': 'middle', 'font-family': 'Nunito Sans, Alegreya Sans, sans-serif', 'font-size': 16, 'font-weight': 500, fill: '#fff' }, pieceLayer);
+        t.textContent = E.budget(st.board, i);
+      }
+    });
+    if (active !== null) {
+      const [x, y] = P(active);
+      el('circle', { cx: x, cy: y, r: U * .86, fill: 'none', stroke: 'var(--board-ink)', 'stroke-width': 3 }, topLayer);
+    }
+    dests.forEach(m => {
+      const [x, y] = P(m.to);
+      if (m.capture) el('circle', { cx: x, cy: y, r: U * .86, fill: 'none', stroke: 'var(--board-hint)', 'stroke-width': 3.5, 'stroke-dasharray': '6 4' }, topLayer);
+      else el('circle', { cx: x, cy: y, r: U * .26, fill: 'var(--board-hint)' }, topLayer);
+    });
+
+    const destSet = new Set(dests.map(m => m.to));
+    hits.forEach((g, i) => {
+      const act = !cpuTurn() && (destSet.has(i) || movable.has(i));
+      g.classList.toggle('act', act);
+      if (act) g.setAttribute('tabindex', '0'); else g.removeAttribute('tabindex');
+      g.setAttribute('role', act ? 'button' : 'presentation');
+      const p = st.board[i];
+      g.setAttribute('aria-label', (p ? T('aria.marble', { cell: E.label(i), p: NAME(p) }) : T('aria.empty', { cell: E.label(i) })) + (destSet.has(i) ? T(p ? 'aria.capture' : 'aria.dest') : ''));
+    });
+
+    // Pannello
+    const who = st.winner || st.turn;
+    $('turnDot').className = 'dot ' + who;
+    const tag = p => cfg.mode === 'cpu' ? T(p === cfg.human ? 'tag.you' : 'tag.cpu') : '';
+    const turnText = st.winner ? T('win', { p: NAME(st.winner), tag: tag(st.winner) }) : T('turn', { p: NAME(st.turn), tag: tag(st.turn) });
+    if ($('turnName').textContent !== turnText) $('turnName').textContent = turnText;
+    $('turnCard').classList.toggle('win', !!st.winner);
+    let msg;
+    if (st.winner) {
+      msg = T(E.checkWinner(st.board) && !st.board.includes(E.other(st.winner)) ? 'msg.allCaptured' : 'msg.reachedTip');
+      if (cfg.mode === 'cpu') msg = T(st.winner === cfg.human ? 'msg.youWon' : 'msg.cpuWon') + msg;
+    } else if (cpuTurn()) {
+      msg = T(thinking ? 'cpu.thinking' : (st.bonus ? 'cpu.bonus' : 'cpu.turn'));
+    } else if (st.bonus && sel === null) {
+      msg = T('msg.bonus', { p: NAME(st.turn) });
+    } else if (sel !== null) {
+      msg = T('msg.sel', { cell: E.label(sel), steps: T('steps', { n: E.budget(st.board, sel) }) }) + T(dests.length ? 'msg.pickDest' : 'msg.noMove');
+    } else {
+      msg = T('msg.pick');
+    }
+    if (st.passed && !st.winner && !st.bonus) msg = T('msg.passed', { p: NAME(E.other(st.turn)) }) + msg;
+    // Solo se cambia: la regione aria-live non deve ripetere lo stesso annuncio a ogni clic
+    if ($('status').innerHTML !== msg) $('status').innerHTML = msg;
+    $('btnEnd').hidden = !st.bonus || !!st.winner || cpuTurn();
+    $('selMode').value = cfg.mode; $('selSide').value = cfg.human; $('selLevel').value = cfg.level;
+    $('lblSide').hidden = $('lblLevel').hidden = cfg.mode !== 'cpu';
+    $('btnUndo').disabled = hist.length === 0;
+    for (const p of ['B', 'R']) {
+      const c = lost[p], n = st.captured[E.other(p)];
+      if (c.n !== null && n > c.n) { c.g.classList.remove('bump'); void c.g.getBBox(); c.g.classList.add('bump'); }
+      c.n = n; c.t.textContent = n;
+      c.g.classList.toggle('zero', n === 0);
+      c.g.setAttribute('aria-label', T('cap.title', { p: NAME(p), n }));
+    }
+    save();
+    scheduleCpu();
+  }
+
+  $('btnEnd').addEventListener('click', endChain);
+  $('btnUndo').addEventListener('click', () => {
+    if (!hist.length) return;
+    cancelCpu();
+    restore(hist.pop());
+    while (cfg.mode === 'cpu' && hist.length && st.turn !== cfg.human) restore(hist.pop());
+    if (cur) cur = log[log.length - 1];
+    render();
+  });
+  $('btnNew').addEventListener('click', () => { $('confirmNew').hidden = false; });
+  $('btnNewNo').addEventListener('click', () => { $('confirmNew').hidden = true; });
+  $('btnNewYes').addEventListener('click', () => { $('confirmNew').hidden = true; cancelCpu(); fresh(); render(); });
+  $('selMode').addEventListener('change', e => setCfg('mode', e.target.value));
+  $('selSide').addEventListener('change', e => setCfg('human', e.target.value));
+  $('selLevel').addEventListener('change', e => setCfg('level', e.target.value));
+  $('showGroups').addEventListener('change', render);
+  $('optHaptics').checked = cfg.haptics !== false;
+  $('optHaptics').addEventListener('change', e => {
+    cfg.haptics = e.target.checked; N.setHaptics(cfg.haptics);
+    try { localStorage.setItem(CFG, JSON.stringify(cfg)); } catch (err) {}
+    if (cfg.haptics) N.haptic('light');
+  });
+
+  // Indietro (Android): chiude la domanda «Nuova partita?», poi deseleziona; altrimenti torna al menu
+  N.onBack(() => {
+    if (!$('confirmNew').hidden) { $('confirmNew').hidden = true; return true; }
+    if (sel !== null) { sel = null; render(); return true; }
+  });
+  // In pausa: copia della partita nell'archivio nativo e IA ferma; alla ripresa il computer riprende il turno
+  N.onPause(() => { N.save('esparta:partita', snapshot()); if (cpuBusy || cpuTimer) cancelCpu(); });
+  N.onResume(() => render());
+  N.keepAwake(true);
+
+  // Sul telefono la scheda del turno sta sopra il tabellone: se il messaggio cambia numero di righe il tabellone salta.
+  // Si riserva l'altezza del messaggio più lungo nella lingua e nella larghezza attuali.
+  function reserveStatus() {
+    const s = $('status'), probe = s.cloneNode(false);
+    probe.removeAttribute('id'); probe.removeAttribute('aria-live');
+    probe.style.cssText = `position:absolute;visibility:hidden;left:0;top:0;width:${s.clientWidth}px;min-height:0`;
+    s.parentNode.appendChild(probe);
+    const p = NAME('R'), sel = T('msg.sel', { cell: 'g12', steps: T('steps', { n: 6 }) });
+    let h = 0;
+    for (const m of [T('msg.pick'), sel + T('msg.pickDest'), sel + T('msg.noMove'), T('msg.bonus', { p }), T('msg.passed', { p }) + T('msg.pick'),
+      T('cpu.thinking'), T('cpu.turn'), T('cpu.bonus'), T('msg.youWon') + T('msg.allCaptured'), T('msg.cpuWon') + T('msg.reachedTip')]) {
+      probe.innerHTML = m; h = Math.max(h, probe.offsetHeight);
+    }
+    probe.remove();
+    s.style.minHeight = h ? h + 'px' : '';
+  }
+  addEventListener('resize', reserveStatus);
+  I18N.onChange(() => { reserveStatus(); render(); });
+
+  const SAVE = 'esparta.partita.v1';
+  function save() { try { localStorage.setItem(SAVE, JSON.stringify(snapshot())); } catch (e) {} }
+  function load() { try { const d = JSON.parse(localStorage.getItem(SAVE)); return d && d.st && 'bonus' in d.st ? d : null; } catch (e) { return null; } }
+
+  function start(data) {
+    if (!(data && data.st)) data = load();
+    if (data && data.st) { restore(data); hist = []; if (cur) cur = log[log.length - 1]; }
+    else {
+      fresh();
+      // nessuna partita nel WebView: si prova la copia nell'archivio nativo
+      N.load('esparta:partita').then(d => {
+        if (d && d.st && 'bonus' in d.st && !hist.length && !log.length) { restore(d); hist = []; if (cur) cur = log[log.length - 1]; render(); }
+      });
+    }
+    render();
+  }
+  I18N.mount();
+  reserveStatus();
+  document.fonts?.ready.then(reserveStatus);
+  window.claude?.hot?.snapshot?.(() => snapshot());
+  window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
+
+<link rel="stylesheet" href="../tema/tema.css">
+<style>
+.ml-sign { max-width: 1080px; margin: 28px auto 0; padding: 0 16px; text-align: center; color: var(--muted); font-size: .88rem; }
+.ml-sign b { font-family: var(--f-display); color: var(--ink); }
+.ml-sign a { color: inherit; }
+</style>
+<p class="ml-sign" id="mlSign"></p>
+<script>
+(() => {
+  const T = {"it":"<b>Esparta</b> fa parte di <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · un gioco di Luis Fernando Marcelino · <a href=\"https://fernando-marcelino.itch.io/esparta\">Commenta su itch.io</a>","pt":"<b>Esparta</b> faz parte de <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · um jogo de Luis Fernando Marcelino · <a href=\"https://fernando-marcelino.itch.io/esparta\">Comente no itch.io</a>","en":"<b>Esparta</b> is part of <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · a game by Luis Fernando Marcelino · <a href=\"https://fernando-marcelino.itch.io/esparta\">Comment on itch.io</a>","es":"<b>Esparta</b> forma parte de <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · un juego de Luis Fernando Marcelino · <a href=\"https://fernando-marcelino.itch.io/esparta\">Comenta en itch.io</a>"};
+  const L = typeof I18N !== 'undefined' ? I18N : null;
+  const show = () => { document.getElementById('mlSign').innerHTML = T[String(L && L.lang || 'en').slice(0, 2)] || T.en; };
+  L && L.onChange && L.onChange(show);
+  show();
+})();
+</script>
+</body>
+</html>

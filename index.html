@@ -63,6 +63,17 @@ a.game:hover { border-color: var(--walnut); }
 .chip.play { border-color: var(--walnut); color: var(--walnut); font-weight: 700; }
 .soon .game { box-shadow: none; background: transparent; border-style: dashed; }
 .about p { margin: 0 0 8px; }
+/* Trailer: anteprima locale, YouTube si carica solo al clic (il sito resta senza cookie finché non si preme play) */
+.trailer { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; padding: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+  background: #000 center / cover no-repeat url(img/trailer-esparta.jpg); cursor: pointer; box-shadow: 0 10px 22px -16px var(--shadow); }
+.trailer::before { content: ""; position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; background: rgba(38, 33, 28, .82); }
+.trailer::after { content: ""; position: absolute; left: 50%; top: 50%; margin: -16px 0 0 -9px; border-style: solid; border-width: 16px 0 16px 28px; border-color: transparent transparent transparent #fffaf2; }
+.trailer:hover::before, .trailer:focus-visible::before { background: var(--walnut); }
+.trailer:focus-visible { outline: 3px solid var(--walnut); outline-offset: 2px; }
+.trailer.playing { cursor: auto; }
+.trailer.playing::before, .trailer.playing::after { display: none; }
+.trailer iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vnote { margin: 0; color: var(--muted); font-size: .85rem; }
 .links { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; padding: 0; list-style: none; }
 a { color: var(--walnut); }
 footer { color: var(--muted); font-size: .85rem; text-align: center; border-top: 1px solid var(--line); padding-top: 14px; }
@@ -78,6 +89,12 @@ footer a { color: inherit; }
   </header>
 
   <p class="intro" data-i18n="intro"></p>
+
+  <section class="shelf">
+    <h2 class="sec" data-i18n="sec.trailer"></h2>
+    <button class="trailer" id="trailer" type="button" data-i18n-aria="trailer.play"></button>
+    <p class="vnote" data-i18n="trailer.note"></p>
+  </section>
 
   <section class="shelf">
     <h2 class="sec" data-i18n="sec.play"></h2>
@@ -138,7 +155,7 @@ footer a { color: inherit; }
 (() => {
   const LANGS = { it: ['it', 'Italiano'], pt: ['pt-BR', 'Português'], en: ['en', 'English'], es: ['es', 'Español'] };
   const D = {
-    it: { lang: 'Lingua',
+    it: { lang: 'Lingua', 'sec.trailer': 'Il trailer di Esparta', 'trailer.play': 'Guarda il trailer di Esparta', 'trailer.note': 'Il video è su YouTube e si carica solo quando premi play.',
       intro: 'Sei giochi d’autore nati in Brasile, quattro giochi da tavolo e due rompicapi, per allenare la mente. Due si giocano qui, gratis, nel browser.',
       'sec.play': 'Gioca ora nel browser', free: 'Gratis', 'sec.app': 'In arrivo nell’app',
       'app.note': 'Tutti e sei i giochi, con il computer come avversario, arriveranno nell’app Populus Ludi per Android.',
@@ -153,7 +170,7 @@ footer a { color: inherit; }
       'transporte.d': 'Il problema di Lucas sull’esagono: chiari e scuri si scambiano di posto, una mossa a testa.',
       p1: '1 giocatore', p2cpu: '2 giocatori o contro il computer', p3cpu: '3 giocatori o contro il computer',
       p24cpu: '2–4 giocatori o contro il computer', p12coop: '1 o 2 giocatori, cooperativo' },
-    pt: { lang: 'Idioma',
+    pt: { lang: 'Idioma', 'sec.trailer': 'O trailer de Esparta', 'trailer.play': 'Assista ao trailer de Esparta', 'trailer.note': 'O vídeo está no YouTube e só carrega quando você aperta o play.',
       intro: 'Seis jogos autorais nascidos no Brasil, quatro jogos de tabuleiro e dois quebra-cabeças, para treinar a mente. Dois se jogam aqui, de graça, no navegador.',
       'sec.play': 'Jogue agora no navegador', free: 'Grátis', 'sec.app': 'Em breve no app',
       'app.note': 'Os seis jogos, com o computador como adversário, vão chegar no app Populus Ludi para Android.',
@@ -168,7 +185,7 @@ footer a { color: inherit; }
       'transporte.d': 'O problema de Lucas no hexágono: claras e escuras trocam de lugar, um movimento de cada vez.',
       p1: '1 jogador', p2cpu: '2 jogadores ou contra o computador', p3cpu: '3 jogadores ou contra o computador',
       p24cpu: '2–4 jogadores ou contra o computador', p12coop: '1 ou 2 jogadores, cooperativo' },
-    en: { lang: 'Language',
+    en: { lang: 'Language', 'sec.trailer': 'The Esparta trailer', 'trailer.play': 'Watch the Esparta trailer', 'trailer.note': 'The video is on YouTube and loads only when you press play.',
       intro: 'Six original games born in Brazil, four board games and two puzzles, to train the mind. Two of them you can play here, free, in your browser.',
       'sec.play': 'Play now in your browser', free: 'Free', 'sec.app': 'Coming in the app',
       'app.note': 'All six games, with the computer as an opponent, are coming to the Populus Ludi app for Android.',
@@ -183,7 +200,7 @@ footer a { color: inherit; }
       'transporte.d': 'Lucas’s problem on a hexagon: light and dark pieces swap places, one move each in turn.',
       p1: '1 player', p2cpu: '2 players or against the computer', p3cpu: '3 players or against the computer',
       p24cpu: '2–4 players or against the computer', p12coop: '1 or 2 players, cooperative' },
-    es: { lang: 'Idioma',
+    es: { lang: 'Idioma', 'sec.trailer': 'El tráiler de Esparta', 'trailer.play': 'Mira el tráiler de Esparta', 'trailer.note': 'El vídeo está en YouTube y solo se carga cuando pulsas play.',
       intro: 'Seis juegos de autor nacidos en Brasil, cuatro juegos de mesa y dos rompecabezas, para entrenar la mente. Dos se juegan aquí, gratis, en el navegador.',
       'sec.play': 'Juega ahora en el navegador', free: 'Gratis', 'sec.app': 'Próximamente en la app',
       'app.note': 'Los seis juegos, con la computadora como rival, llegarán a la app Populus Ludi para Android.',
@@ -220,6 +237,19 @@ footer a { color: inherit; }
   sel.replaceChildren(...Object.keys(LANGS).map(k => { const o = document.createElement('option'); o.value = k; o.lang = LANGS[k][0]; o.textContent = LANGS[k][1]; return o; }));
   sel.addEventListener('change', () => setLang(sel.value));
   apply();
+  // YouTube senza cookie, caricato solo al clic
+  const tr = document.getElementById('trailer');
+  tr.addEventListener('click', () => {
+    const box = document.createElement('div');
+    box.className = 'trailer playing';
+    const f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/j59VbbETx60?autoplay=1&rel=0';
+    f.title = D[lang]['trailer.play'];
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    box.appendChild(f);
+    tr.replaceWith(box);
+  }, { once: true });
 })();
 </script>
 <link rel="stylesheet" href="tema/tema.css">

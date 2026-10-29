@@ -1,0 +1,1229 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#efece6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#191714" media="(prefers-color-scheme: dark)">
+<style>@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/cormorant-garamond-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:500;font-display:swap;src:url(fonts/cormorant-garamond-latin-500-italic.woff2) format("woff2")}
+@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/cormorant-garamond-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Karla";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/karla-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Karla";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/karla-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Karla";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/karla-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2")}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{margin:0;overscroll-behavior:none}
+[hidden]{display:none!important}</style>
+<style>.back-menu{align-self:center;font:400 2.2rem/1 Georgia,serif;color:inherit;text-decoration:none;padding:0 6px 4px 2px;margin-left:-4px;-webkit-tap-highlight-color:transparent}.back-menu:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:4px}</style>
+</head>
+<body>
+<title>Ire · Populus Ludi</title>
+<style>
+/* Layout: il tabellone di noce come oggetto al centro dell'attenzione, un taccuino essenziale accanto */
+:root {
+  --bg: #efece6;
+  --surface: #f8f6f2;
+  --ink: #2a241f;
+  --muted: #6e655b;
+  --line: #d8d1c6;
+  --accent: #2f6b4f;
+  --accent-ink: #ffffff;
+  --good: #2f6b4f;
+  --bad: #a3392b;
+  --walnut: #5a3a22;
+  --walnut-edge: #3f2716;
+  --groove: #e8c99a;
+  --glass: #1f4a2c;
+  --board-hint: #f4e2c0;
+  --f-display: "Cormorant Garamond", Garamond, Georgia, serif;
+  --f-body: "Karla", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --board-shadow: rgba(70, 45, 20, .24);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #191714; --surface: #23201c; --ink: #eee8df; --muted: #a59b8e; --line: #3a352f;
+    --accent: #6cc59a; --accent-ink: #191714; --good: #6cc59a; --bad: #f08a78; --board-shadow: rgba(0, 0, 0, .55); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #191714; --surface: #23201c; --ink: #eee8df; --muted: #a59b8e; --line: #3a352f;
+  --accent: #6cc59a; --accent-ink: #191714; --good: #6cc59a; --bad: #f08a78; --board-shadow: rgba(0, 0, 0, .55); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.5; padding-inline: 16px; padding-block: 20px 32px; }
+header.top { max-width: 1040px; margin: 0 auto 16px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+h1 { font-family: var(--f-display); font-weight: 600; font-size: 2.8rem; margin: 0; line-height: 1; letter-spacing: .02em; }
+.sub { color: var(--muted); margin: 0; }
+.langsel { margin-left: auto; align-self: center; font: inherit; font-size: .9rem; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.langsel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 350px); gap: 28px; align-items: start; }
+@media (max-width: 760px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
+.boardbox { min-width: 0; display: flex; justify-content: center; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+svg#board { width: 100%; max-width: 620px; height: auto; display: block; touch-action: manipulation; user-select: none; filter: drop-shadow(0 14px 22px var(--board-shadow)); }
+.cell.act { cursor: pointer; }
+.cell:focus { outline: none; }
+.cell:focus-visible .hit { stroke: var(--board-hint); stroke-width: 3; }
+.panel { min-width: 0; display: grid; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat .n { font-family: var(--f-display); font-size: 2.2rem; font-weight: 600; line-height: 1; font-variant-numeric: lining-nums tabular-nums; }
+.stat .k { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.status { margin: 12px 0; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; font-weight: 500; padding: 2px 10px; border-radius: 999px; border: 1px solid currentColor; }
+.chip.ok { color: var(--good); } .chip.ko { color: var(--bad); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.actions > button { flex: 1 1 auto; padding-inline: 10px; }
+.rechelp { margin: 0 0 12px; font-size: .92rem; line-height: 1.45; color: var(--muted); }
+button { font: inherit; font-weight: 500; border-radius: 8px; padding: 8px 14px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--muted); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.lbl { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+ol.log { margin: 0; padding-left: 2.4em; font-family: var(--f-mono); font-size: .85rem; max-height: 170px; overflow-y: auto; font-variant-numeric: tabular-nums; }
+.empty { color: var(--muted); font-style: italic; margin: 0; }
+details summary { cursor: pointer; font-family: var(--f-display); font-weight: 600; font-size: 1.2rem; }
+details ul { padding-left: 1.2em; margin: 10px 0 0; display: grid; gap: 6px; }
+.prov { color: var(--accent); font-weight: 500; }
+.seg { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 12px; font-size: .92rem; color: var(--muted); }
+.seg .opts { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; padding: 5px 10px; font-size: .9rem; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.card.end-win { border-color: var(--good); }
+.card.end-lose { border-color: var(--bad); }
+@media (max-width: 760px) {
+  body { padding-block: 8px 24px; }
+  header.top { margin-bottom: 8px; }
+  h1 { font-size: 2rem; }
+  .sub { display: none; }
+  .wrap { gap: 12px; }
+  .panel { display: contents; }
+  #mainCard { order: -1; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; padding: 10px 12px; box-shadow: 0 6px 14px -10px rgba(0,0,0,.4); }
+  .boardbox { order: 0; position: static; }
+  .panel > .card:not(#mainCard) { order: 1; }
+  .stat .n { font-size: 1.6rem; }
+  .status { margin: 6px 0 8px; font-size: .92rem; line-height: 1.35; }
+  button { padding: 7px 12px; font-size: .95rem; }
+  svg#board { max-height: calc(100dvh - 230px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); width: auto; max-width: 100%; }
+}
+@keyframes fade { from { opacity: .9 } to { opacity: 0 } }
+.ghost { animation: fade .9s ease-out forwards; }
+@media (prefers-reduced-motion: reduce) { .ghost { animation: none; opacity: 0; } }
+</style>
+
+<header class="top">
+  <a class="back-menu" href="../index.html" data-back-nav aria-label="Menu">‹</a>
+  <h1>Ire</h1>
+  <p class="sub" data-i18n="sub"></p>
+  <select id="selLang" class="langsel" data-i18n-aria="lang.label"></select>
+</header>
+
+<div class="wrap">
+  <div class="boardbox"><svg id="board" role="group" data-i18n-aria="board.aria"></svg></div>
+
+  <aside class="panel">
+    <section class="card" id="mainCard" aria-live="polite">
+      <div class="stats">
+        <div class="stat"><div class="n" id="nLeft">29</div><div class="k" data-i18n="stat.left"></div></div>
+        <div class="stat"><div class="n" id="nMoves">0</div><div class="k" data-i18n="stat.moves"></div></div>
+        <div class="stat"><div class="n" id="nHints">0</div><div class="k" data-i18n="stat.hints"></div></div>
+      </div>
+      <p class="status" id="status"></p>
+      <div class="actions">
+        <button id="btnHint" data-i18n="btn.hint"></button>
+        <button id="btnUndo" data-i18n="btn.undo"></button>
+        <button id="btnNew" data-i18n="btn.new"></button>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:12px;color:var(--muted);font-size:.95rem;cursor:pointer">
+        <input type="checkbox" id="showSolv"> <span data-i18n="solv.toggle"></span>
+      </label>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:6px;color:var(--muted);font-size:.95rem;cursor:pointer">
+        <input type="checkbox" id="optHaptics" checked> <span data-i18n="opt.haptics"></span>
+      </label>
+    </section>
+
+    <!-- Registrazione dal tabellone vero e registro: strumenti per le prove, nascosti nella versione per i giocatori -->
+    <section class="card" id="recCard" hidden>
+      <p class="lbl" data-i18n="rec.title"></p>
+      <p class="rechelp" data-i18n="rec.help"></p>
+      <div class="actions">
+        <button id="btnRec"></button>
+        <button id="btnRecOk" class="primary" hidden data-i18n="btn.recOk"></button>
+        <button id="btnCopy" hidden></button>
+      </div>
+    </section>
+
+    <section class="card" hidden>
+      <p class="lbl" data-i18n="log.title"></p>
+      <p class="empty" id="logEmpty" data-i18n="log.empty"></p>
+      <ol class="log" id="log"></ol>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary data-i18n="rules.title"></summary>
+        <ul>
+          <li data-i18n-html="rules.1"></li>
+          <li data-i18n-html="rules.2"></li>
+          <li data-i18n-html="rules.3"></li>
+          <li data-i18n-html="rules.4"></li>
+          <li data-i18n-html="rules.5"></li>
+          <li data-i18n-html="rules.6"></li>
+        </ul>
+      </details>
+    </section>
+  </aside>
+</div>
+
+<script>
+// Lingue dell'interfaccia: IT (fonte), PT-BR, EN, ES. build.js lo incorpora inline (niente fetch: funziona da file:// e come artifact).
+// Uso: I18N.t('chiave', {var}) · elementi con data-i18n / data-i18n-html / data-i18n-aria / data-i18n-title · <select id="selLang">.
+const I18N = ((STORE, DICT) => {
+  const LANGS = { it: ['it', 'Italiano'], pt: ['pt-BR', 'Português'], en: ['en', 'English'], es: ['es', 'Español'] };
+  const missing = new Set();
+  function detect() {
+    try { const s = localStorage.getItem(STORE); if (DICT[s]) return s; } catch (e) {}
+    const nav = typeof navigator !== 'undefined' ? navigator.language || (navigator.languages || [])[0] || '' : '';
+    return { pt: 'pt', es: 'es', it: 'it' }[String(nav).toLowerCase().slice(0, 2)] || 'en';
+  }
+  let lang = detect();
+  const subs = [];
+  const fmt = (s, v = {}) => typeof s === 'function' ? s(v) : s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
+  function t(k, v) {
+    const s = k in DICT[lang] ? DICT[lang][k] : DICT.it[k];
+    if (s === undefined) { missing.add(k); return k; }
+    return fmt(s, v);
+  }
+  function apply() {
+    if (typeof document === 'undefined') return;
+    const q = (sel, f) => document.querySelectorAll(sel).forEach(f);
+    q('[data-i18n]', e => { e.textContent = t(e.dataset.i18n); });
+    q('[data-i18n-html]', e => { e.innerHTML = t(e.dataset.i18nHtml); });
+    q('[data-i18n-aria]', e => e.setAttribute('aria-label', t(e.dataset.i18nAria)));
+    q('[data-i18n-title]', e => e.setAttribute('title', t(e.dataset.i18nTitle)));
+    document.title = t('doc.title');
+    document.documentElement.lang = LANGS[lang][0];
+    const s = document.getElementById('selLang');
+    if (s) s.value = lang;
+  }
+  function set(l) {
+    if (!DICT[l] || l === lang) return;
+    lang = l;
+    try { localStorage.setItem(STORE, l); } catch (e) {}
+    apply();
+    subs.forEach(f => f());
+  }
+  function mount() {
+    const s = document.getElementById('selLang');
+    if (s) {
+      s.replaceChildren(...Object.keys(LANGS).map(k => {
+        const o = document.createElement('option');
+        o.value = k; o.lang = LANGS[k][0]; o.textContent = LANGS[k][1];
+        return o;
+      }));
+      s.addEventListener('change', () => set(s.value));
+    }
+    apply();
+  }
+  return { t, set, apply, mount, onChange: f => subs.push(f), get lang() { return lang; }, DICT, missing };
+})('ire.lingua', {
+  it: {
+    'doc.title': 'Ire',
+    'lang.label': 'Lingua',
+    'opt.haptics': 'Vibrazione',
+    'sub': 'Solitario logico di Luis Fernando Marcelino',
+    'board.aria': 'Tabellone di Ire',
+    'stat.left': 'Bersagli',
+    'stat.moves': 'Mosse',
+    'stat.hints': 'Aiuti',
+    'btn.hint': 'Suggerisci',
+    'btn.undo': 'Annulla',
+    'btn.new': 'Ricomincia',
+    'solv.toggle': 'Dimmi se la partita è ancora risolvibile',
+    'rec.title': 'Registra una partita dal tabellone vero',
+    'rec.help': "Rifai qui le mosse che fai sul tabellone. Prima scegli dove sta la seconda Ire, poi premi «Inizia a registrare». Per ogni mossa tocca la casella dove sposti l'Ire, tocca le biglie che togli e premi «Conferma mossa». Ogni mossa viene confrontata con le regole scritte: ✓ se le rispetta, ✗ se no.",
+    'btn.rec': 'Inizia a registrare',
+    'btn.recStop': 'Smetti di registrare',
+    'btn.recOk': 'Conferma mossa',
+    'btn.copy': 'Copia registro',
+    'btn.copied': 'Copiato',
+    'btn.share': 'Condividi registro',
+    'log.title': 'Mosse',
+    'log.empty': 'Nessuna mossa.',
+    'rules.title': 'Regole',
+    'rules.1': "Tabellone esagonale di 37 caselle. Una Ire bianca sta al centro, l'altra su uno dei <b>6 angoli</b>, a scelta: prima della prima mossa puoi spostarla toccando un altro angolo. Le 6 caselle intorno al centro sono vuote, le altre 29 hanno un bersaglio verde.",
+    'rules.2': "Si muove solo l'Ire centrale, di una casella, lungo le linee, verso una casella vuota. Finché ci sono bersagli, <b>ogni mossa cattura</b>.",
+    'rules.3': "<b>Avvicinamento</b>: l'Ire arriva nella casella subito accanto a una biglia, sulla linea del movimento. <b>Allontanamento</b>: l'Ire si stacca da una biglia che aveva subito alle spalle. La cattura <b>si ferma alla prima biglia</b>: se ce ne sono altre in fila dietro, restano.",
+    'rules.4': 'Se una mossa permette tutte e due le catture, scegli tu quale biglia prendere.',
+    'rules.5': "Quando i bersagli sono finiti, l'Ire <b>cammina libera</b> finché incontra l'altra Ire e la cattura, per avvicinamento o per allontanamento: è la vittoria.",
+    'rules.6': 'Da ogni angolo di partenza la partita si può risolvere.',
+    'abbr.avv': 'avv.',
+    'abbr.all': 'all.',
+    'log.noCap': 'nessuna cattura',
+    'log.walk': 'cammino',
+    'log.quiet': 'senza cattura',
+    'note.far': "l'Ire si è spostata di più di una casella",
+    'note.none': 'per le regole scritte questa mossa non cattura niente',
+    'note.should': 'per le regole scritte cattura {list}',
+    'note.or': ' oppure ',
+    'aria.move': ', mossa possibile',
+    'rec.needDest': "Prima tocca la casella dove sposti l'Ire.",
+    'msg.recWon': "<b>Registrazione:</b> l'altra Ire è stata catturata, partita finita. Premi «Copia registro» e incollami le mosse.",
+    'msg.recDest': "<b>Registrazione:</b> tocca la casella dove sposti l'Ire.",
+    'msg.recCaps': '<b>Registrazione:</b> tocca le biglie che togli (cerchi rossi), poi «Conferma mossa».',
+    'msg.left': ({ n }) => n === 1 ? 'Resta 1 bersaglio.' : `Restano ${n} bersagli.`,
+    'msg.won': ({ n }) => `<b>Risolto!</b> Tutti i bersagli eliminati e, con l'ultima mossa, catturata l'altra Ire. ${n === 1 ? '1 mossa' : n + ' mosse'}.`,
+    'msg.separate': "<b>Quasi.</b> Hai tolto tutti i bersagli, ma da qui l'Ire non può catturare l'altra Ire. Annulla qualche mossa e riprova.",
+    'msg.blocked': ({ n }) => `<b>Bloccato.</b> L'Ire non può più muoversi e ${n === 1 ? 'resta 1 bersaglio' : `restano ${n} bersagli`}. Annulla qualche mossa e riprova.`,
+    'msg.pending': 'Questa mossa può catturare per avvicinamento o per allontanamento: tocca una biglia della fila che vuoi prendere. Tocca altrove per annullare.',
+    'msg.start': "Tocca un punto chiaro per muovere l'Ire centrale. Prima di iniziare puoi spostare la seconda Ire su un altro angolo.",
+    'msg.walk': "Bersagli finiti! Ora l'Ire cammina libera (cerchi vuoti) finché incontra l'altra Ire e la cattura.",
+    'msg.quiet': "Nessuna cattura possibile: muovi l'Ire di una casella senza catturare (cerchi vuoti).",
+    'msg.lastCap': "Bersagli finiti. Ora cattura l'altra Ire: è l'ultima mossa.",
+    'msg.play': "Tocca un punto chiaro per muovere l'Ire. Se puoi catturare, devi catturare.",
+    'chip.ok': 'Ancora risolvibile',
+    'chip.ko': 'Non più risolvibile',
+    'msg.noSolution': 'Da qui non esiste una soluzione: annulla qualche mossa.',
+    'copy.head': 'Ire — seconda Ire in {cell}',
+    'copy.fail': "Copia non riuscita: seleziona e copia le mosse dall'elenco qui sotto.",
+  },
+  pt: {
+    'doc.title': 'Ire',
+    'lang.label': 'Idioma',
+    'opt.haptics': 'Vibração',
+    'sub': 'Paciência lógica de Luis Fernando Marcelino',
+    'board.aria': 'Tabuleiro de Ire',
+    'stat.left': 'Alvos',
+    'stat.moves': 'Jogadas',
+    'stat.hints': 'Dicas',
+    'btn.hint': 'Sugerir',
+    'btn.undo': 'Desfazer',
+    'btn.new': 'Recomeçar',
+    'solv.toggle': 'Avise se a partida ainda tem solução',
+    'rec.title': 'Registre uma partida do tabuleiro de verdade',
+    'rec.help': 'Refaça aqui as jogadas que você faz no tabuleiro. Primeiro escolha onde fica a segunda Ire, depois toque em «Começar a registrar». Em cada jogada, toque na casa para onde move a Ire, toque nas bolinhas que retira e toque em «Confirmar jogada». Cada jogada é comparada com as regras escritas: ✓ se as respeita, ✗ se não.',
+    'btn.rec': 'Começar a registrar',
+    'btn.recStop': 'Parar de registrar',
+    'btn.recOk': 'Confirmar jogada',
+    'btn.copy': 'Copiar registro',
+    'btn.copied': 'Copiado',
+    'btn.share': 'Compartilhar registro',
+    'log.title': 'Jogadas',
+    'log.empty': 'Nenhuma jogada.',
+    'rules.title': 'Regras',
+    'rules.1': 'Tabuleiro hexagonal de 37 casas. Uma Ire branca fica no centro, a outra em um dos <b>6 cantos</b>, à escolha: antes da primeira jogada você pode mudá-la tocando em outro canto. As 6 casas em volta do centro ficam vazias, as outras 29 têm um alvo verde.',
+    'rules.2': 'Só a Ire central se move, uma casa por vez, ao longo das linhas, para uma casa vazia. Enquanto houver alvos, <b>toda jogada captura</b>.',
+    'rules.3': '<b>Aproximação</b>: a Ire chega à casa logo ao lado de uma bolinha, na linha do movimento. <b>Afastamento</b>: a Ire se afasta de uma bolinha que estava logo atrás dela. A captura <b>para na primeira bolinha</b>: se houver outras em fila atrás, elas ficam.',
+    'rules.4': 'Se uma jogada permite as duas capturas, você escolhe qual bolinha tirar.',
+    'rules.5': 'Quando os alvos acabam, a Ire <b>anda livre</b> até encontrar a outra Ire e capturá-la, por aproximação ou por afastamento: é a vitória.',
+    'rules.6': 'De qualquer canto de partida a partida tem solução.',
+    'abbr.avv': 'aprox.',
+    'abbr.all': 'afast.',
+    'log.noCap': 'nenhuma captura',
+    'log.walk': 'caminho livre',
+    'log.quiet': 'sem captura',
+    'note.far': 'a Ire andou mais de uma casa',
+    'note.none': 'pelas regras escritas esta jogada não captura nada',
+    'note.should': 'pelas regras escritas captura {list}',
+    'note.or': ' ou ',
+    'aria.move': ', jogada possível',
+    'rec.needDest': 'Primeiro toque na casa para onde move a Ire.',
+    'msg.recWon': '<b>Registro:</b> a outra Ire foi capturada, partida encerrada. Toque em «Copiar registro» e me mande as jogadas.',
+    'msg.recDest': '<b>Registro:</b> toque na casa para onde move a Ire.',
+    'msg.recCaps': '<b>Registro:</b> toque nas bolinhas que retira (círculos vermelhos), depois em «Confirmar jogada».',
+    'msg.left': ({ n }) => n === 1 ? 'Resta 1 alvo.' : `Restam ${n} alvos.`,
+    'msg.won': ({ n }) => `<b>Resolvido!</b> Todos os alvos eliminados e, com a última jogada, a outra Ire capturada. ${n === 1 ? '1 jogada' : n + ' jogadas'}.`,
+    'msg.separate': '<b>Quase.</b> Você tirou todos os alvos, mas daqui a Ire não consegue capturar a outra Ire. Desfaça algumas jogadas e tente de novo.',
+    'msg.blocked': ({ n }) => `<b>Travado.</b> A Ire não pode mais se mover e ${n === 1 ? 'resta 1 alvo' : `restam ${n} alvos`}. Desfaça algumas jogadas e tente de novo.`,
+    'msg.pending': 'Esta jogada pode capturar por aproximação ou por afastamento: toque em uma bolinha da fila que quer tirar. Toque em outro lugar para cancelar.',
+    'msg.start': 'Toque em um ponto claro para mover a Ire central. Antes de começar você pode mudar a segunda Ire para outro canto.',
+    'msg.walk': 'Acabaram os alvos! Agora a Ire anda livre (círculos vazios) até encontrar a outra Ire e capturá-la.',
+    'msg.quiet': 'Nenhuma captura possível: mova a Ire uma casa sem capturar (círculos vazios).',
+    'msg.lastCap': 'Acabaram os alvos. Agora capture a outra Ire: é a última jogada.',
+    'msg.play': 'Toque em um ponto claro para mover a Ire. Se puder capturar, é obrigado a capturar.',
+    'chip.ok': 'Ainda tem solução',
+    'chip.ko': 'Não tem mais solução',
+    'msg.noSolution': 'Daqui não existe solução: desfaça algumas jogadas.',
+    'copy.head': 'Ire — segunda Ire em {cell}',
+    'copy.fail': 'Não foi possível copiar: selecione e copie as jogadas da lista abaixo.',
+  },
+  en: {
+    'doc.title': 'Ire',
+    'lang.label': 'Language',
+    'opt.haptics': 'Vibration',
+    'sub': 'A logic solitaire by Luis Fernando Marcelino',
+    'board.aria': 'Ire board',
+    'stat.left': 'Targets',
+    'stat.moves': 'Moves',
+    'stat.hints': 'Hints',
+    'btn.hint': 'Hint',
+    'btn.undo': 'Undo',
+    'btn.new': 'Restart',
+    'solv.toggle': 'Tell me if the game can still be solved',
+    'rec.title': 'Record a game from the real board',
+    'rec.help': 'Replay here the moves you make on the board. First choose where the second Ire stands, then press “Start recording”. For each move, tap the cell you move the Ire to, tap the marbles you remove and press “Confirm move”. Each move is checked against the written rules: ✓ if it follows them, ✗ if not.',
+    'btn.rec': 'Start recording',
+    'btn.recStop': 'Stop recording',
+    'btn.recOk': 'Confirm move',
+    'btn.copy': 'Copy record',
+    'btn.copied': 'Copied',
+    'btn.share': 'Share record',
+    'log.title': 'Moves',
+    'log.empty': 'No moves yet.',
+    'rules.title': 'Rules',
+    'rules.1': 'Hexagonal board of 37 cells. One white Ire stands in the centre, the other on one of the <b>6 corners</b>, your choice: before the first move you can shift it by tapping another corner. The 6 cells around the centre are empty; the other 29 hold a green target.',
+    'rules.2': 'Only the central Ire moves, one cell at a time, along the lines, onto an empty cell. While targets remain, <b>every move captures</b>.',
+    'rules.3': '<b>Approach</b>: the Ire lands right next to a marble, on the line of movement. <b>Withdrawal</b>: the Ire moves away from a marble that was right behind it. The capture <b>stops at the first marble</b>: any others lined up behind it stay.',
+    'rules.4': 'If a move allows both captures, you choose which marble to take.',
+    'rules.5': 'Once the targets are gone, the Ire <b>walks freely</b> until it meets the other Ire and captures it, by approach or by withdrawal: that is the win.',
+    'rules.6': 'Every starting corner can be solved.',
+    'abbr.avv': 'appr.',
+    'abbr.all': 'withdr.',
+    'log.noCap': 'no capture',
+    'log.walk': 'free walk',
+    'log.quiet': 'no capture',
+    'note.far': 'the Ire moved more than one cell',
+    'note.none': 'under the written rules this move captures nothing',
+    'note.should': 'under the written rules it captures {list}',
+    'note.or': ' or ',
+    'aria.move': ', possible move',
+    'rec.needDest': 'First tap the cell you move the Ire to.',
+    'msg.recWon': '<b>Recording:</b> the other Ire has been captured, game over. Press “Copy record” and paste the moves to me.',
+    'msg.recDest': '<b>Recording:</b> tap the cell you move the Ire to.',
+    'msg.recCaps': '<b>Recording:</b> tap the marbles you remove (red circles), then “Confirm move”.',
+    'msg.left': ({ n }) => n === 1 ? '1 target left.' : `${n} targets left.`,
+    'msg.won': ({ n }) => `<b>Solved!</b> Every target removed and, with the last move, the other Ire captured. ${n === 1 ? '1 move' : n + ' moves'}.`,
+    'msg.separate': '<b>Almost.</b> You removed every target, but from here the Ire cannot capture the other Ire. Undo a few moves and try again.',
+    'msg.blocked': ({ n }) => `<b>Stuck.</b> The Ire can no longer move and ${n === 1 ? '1 target is' : `${n} targets are`} left. Undo a few moves and try again.`,
+    'msg.pending': 'This move can capture by approach or by withdrawal: tap a marble in the line you want to take. Tap elsewhere to cancel.',
+    'msg.start': 'Tap a light spot to move the central Ire. Before you start you can move the second Ire to another corner.',
+    'msg.walk': 'No targets left! Now the Ire walks freely (empty circles) until it meets the other Ire and captures it.',
+    'msg.quiet': 'No capture possible: move the Ire one cell without capturing (empty circles).',
+    'msg.lastCap': 'No targets left. Now capture the other Ire: it is the last move.',
+    'msg.play': 'Tap a light spot to move the Ire. If you can capture, you must.',
+    'chip.ok': 'Still solvable',
+    'chip.ko': 'No longer solvable',
+    'msg.noSolution': 'There is no solution from here: undo a few moves.',
+    'copy.head': 'Ire — second Ire on {cell}',
+    'copy.fail': 'Copy failed: select and copy the moves from the list below.',
+  },
+  es: {
+    'doc.title': 'Ire',
+    'lang.label': 'Idioma',
+    'opt.haptics': 'Vibración',
+    'sub': 'Solitario lógico de Luis Fernando Marcelino',
+    'board.aria': 'Tablero de Ire',
+    'stat.left': 'Blancos',
+    'stat.moves': 'Jugadas',
+    'stat.hints': 'Ayudas',
+    'btn.hint': 'Sugerir',
+    'btn.undo': 'Deshacer',
+    'btn.new': 'Empezar de nuevo',
+    'solv.toggle': 'Avísame si la partida todavía tiene solución',
+    'rec.title': 'Registra una partida del tablero real',
+    'rec.help': 'Repite aquí las jugadas que haces en el tablero. Primero elige dónde está la segunda Ire y luego pulsa «Empezar a registrar». En cada jugada toca la casilla a la que mueves la Ire, toca las canicas que quitas y pulsa «Confirmar jugada». Cada jugada se compara con las reglas escritas: ✓ si las cumple, ✗ si no.',
+    'btn.rec': 'Empezar a registrar',
+    'btn.recStop': 'Dejar de registrar',
+    'btn.recOk': 'Confirmar jugada',
+    'btn.copy': 'Copiar registro',
+    'btn.copied': 'Copiado',
+    'btn.share': 'Compartir registro',
+    'log.title': 'Jugadas',
+    'log.empty': 'Ninguna jugada.',
+    'rules.title': 'Reglas',
+    'rules.1': 'Tablero hexagonal de 37 casillas. Una Ire blanca está en el centro y la otra en una de las <b>6 esquinas</b>, a elección: antes de la primera jugada puedes cambiarla tocando otra esquina. Las 6 casillas alrededor del centro están vacías; las otras 29 tienen un blanco verde.',
+    'rules.2': 'Solo se mueve la Ire central, una casilla cada vez, a lo largo de las líneas, hacia una casilla vacía. Mientras queden blancos, <b>cada jugada captura</b>.',
+    'rules.3': '<b>Aproximación</b>: la Ire llega a la casilla justo al lado de una canica, en la línea del movimiento. <b>Alejamiento</b>: la Ire se aparta de una canica que tenía justo detrás. La captura <b>se detiene en la primera canica</b>: si hay otras en fila detrás, se quedan.',
+    'rules.4': 'Si una jugada permite las dos capturas, tú eliges qué canica tomar.',
+    'rules.5': 'Cuando se acaban los blancos, la Ire <b>camina libre</b> hasta encontrar la otra Ire y capturarla, por aproximación o por alejamiento: es la victoria.',
+    'rules.6': 'Desde cualquier esquina de salida la partida tiene solución.',
+    'abbr.avv': 'aprox.',
+    'abbr.all': 'alej.',
+    'log.noCap': 'sin captura',
+    'log.walk': 'camino libre',
+    'log.quiet': 'sin captura',
+    'note.far': 'la Ire se movió más de una casilla',
+    'note.none': 'según las reglas escritas esta jugada no captura nada',
+    'note.should': 'según las reglas escritas captura {list}',
+    'note.or': ' o ',
+    'aria.move': ', jugada posible',
+    'rec.needDest': 'Primero toca la casilla a la que mueves la Ire.',
+    'msg.recWon': '<b>Registro:</b> la otra Ire ha sido capturada, partida terminada. Pulsa «Copiar registro» y pégame las jugadas.',
+    'msg.recDest': '<b>Registro:</b> toca la casilla a la que mueves la Ire.',
+    'msg.recCaps': '<b>Registro:</b> toca las canicas que quitas (círculos rojos) y luego «Confirmar jugada».',
+    'msg.left': ({ n }) => n === 1 ? 'Queda 1 blanco.' : `Quedan ${n} blancos.`,
+    'msg.won': ({ n }) => `<b>¡Resuelto!</b> Todos los blancos eliminados y, con la última jugada, capturada la otra Ire. ${n === 1 ? '1 jugada' : n + ' jugadas'}.`,
+    'msg.separate': '<b>Casi.</b> Quitaste todos los blancos, pero desde aquí la Ire no puede capturar a la otra Ire. Deshaz algunas jugadas y vuelve a intentarlo.',
+    'msg.blocked': ({ n }) => `<b>Bloqueado.</b> La Ire ya no puede moverse y ${n === 1 ? 'queda 1 blanco' : `quedan ${n} blancos`}. Deshaz algunas jugadas y vuelve a intentarlo.`,
+    'msg.pending': 'Esta jugada puede capturar por aproximación o por alejamiento: toca una canica de la fila que quieres tomar. Toca en otro lugar para cancelar.',
+    'msg.start': 'Toca un punto claro para mover la Ire central. Antes de empezar puedes llevar la segunda Ire a otra esquina.',
+    'msg.walk': '¡Se acabaron los blancos! Ahora la Ire camina libre (círculos vacíos) hasta encontrar la otra Ire y capturarla.',
+    'msg.quiet': 'No hay capturas posibles: mueve la Ire una casilla sin capturar (círculos vacíos).',
+    'msg.lastCap': 'Se acabaron los blancos. Ahora captura la otra Ire: es la última jugada.',
+    'msg.play': 'Toca un punto claro para mover la Ire. Si puedes capturar, debes capturar.',
+    'chip.ok': 'Todavía tiene solución',
+    'chip.ko': 'Ya no tiene solución',
+    'msg.noSolution': 'Desde aquí no hay solución: deshaz algunas jugadas.',
+    'copy.head': 'Ire — segunda Ire en {cell}',
+    'copy.fail': 'No se pudo copiar: selecciona y copia las jugadas de la lista de abajo.',
+  },
+});
+if (typeof module !== 'undefined') module.exports = I18N;
+
+</script>
+<script>
+// IRE — motore di regole (funzioni pure, senza DOM)
+const Ire = (() => {
+  const ROWS = [4, 5, 6, 7, 6, 5, 4];
+  const MID = 3;
+  // Coordinate a x raddoppiata: vicini = (±2,0), (±1,±1)
+  const cells = [];
+  ROWS.forEach((n, y) => { for (let i = 0; i < n; i++) cells.push({ x: -(n - 1) + 2 * i, y }); });
+  const index = new Map(cells.map((c, i) => [c.x + ',' + c.y, i]));
+  const at = (x, y) => index.has(x + ',' + y) ? index.get(x + ',' + y) : -1;
+  const DIRS = [[2, 0], [-2, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+  // vicini precalcolati: il risolutore chiama step milioni di volte
+  const NB = cells.map(c => DIRS.map(d => at(c.x + d[0], c.y + d[1])));
+  const OPP = DIRS.map(([a, b]) => DIRS.findIndex(([c, e]) => c === -a && e === -b));
+  const stepK = (i, k) => i < 0 ? -1 : NB[i][k];
+  const step = (i, d) => stepK(i, DIRS.indexOf(d));
+  const neighbors = i => DIRS.map(d => step(i, d)).filter(j => j >= 0);
+  const CENTER = at(0, MID);
+  const RING = new Set(neighbors(CENTER));
+  const BORDER = cells.map((c, i) => i).filter(i => neighbors(i).length < 6);
+  const CORNERS = cells.map((c, i) => i).filter(i => neighbors(i).length === 3);
+
+  // board[i]: 'T' bersaglio, null vuota. Le due Ire stanno in st.ire (mobile) e st.second (ferma).
+  // paika: mossa senza cattura quando non ce ne sono (spenta: l'autore non la usa)
+  // fila: true = si prende tutta la fila di biglie attaccate; false = la cattura si ferma alla prima biglia
+  function newGame(second = CORNERS[0], { paika = false, fila = false } = {}) {
+    if (!CORNERS.includes(second)) throw new Error('La seconda Ire va su un angolo');
+    const board = cells.map((c, i) => (i === CENTER || i === second || RING.has(i)) ? null : 'T');
+    return { board, ire: CENTER, second, paika, fila, moves: 0, last: null, won: false };
+  }
+
+  const remaining = st => st.board.filter(p => p === 'T').length;
+
+  // Fila catturata: deve cominciare nella casella subito accanto e prosegue sui bersagli contigui.
+  // L'altra Ire si cattura solo per ultima, quando non restano bersagli.
+  function captureLine(st, start, k) {
+    if (start === st.second) return remaining(st) === 0 ? [start] : [];
+    const out = [];
+    let x = start;
+    while (x >= 0 && st.board[x] === 'T') { out.push(x); if (!st.fila) break; x = stepK(x, k); }
+    return out;
+  }
+
+  function captures(st, pos = st.ire) {
+    const out = [];
+    for (let k = 0; k < 6; k++) {
+      const to = stepK(pos, k);
+      if (to < 0 || to === st.second || st.board[to]) continue;
+      const a = captureLine(st, stepK(to, k), k);
+      const w = captureLine(st, stepK(pos, OPP[k]), OPP[k]);
+      if (a.length) out.push({ from: pos, to, cap: a, kind: 'avvicinamento' });
+      if (w.length) out.push({ from: pos, to, cap: w, kind: 'allontanamento' });
+    }
+    return out;
+  }
+
+  // Senza catture possibili si può spostare l'Ire di una casella senza catturare (paika del Fanorona)
+  function quietMoves(st, pos = st.ire) {
+    return NB[pos].filter(to => to >= 0 && to !== st.second && !st.board[to])
+      .map(to => ({ from: pos, to, cap: [], kind: 'senza cattura' }));
+  }
+
+  function legalMoves(st) {
+    if (st.won) return [];
+    const c = captures(st);
+    // Senza bersagli non c'è più niente da catturare: l'Ire cammina libera fino a catturare l'altra
+    return c.length || !(st.paika || remaining(st) === 0) ? c : quietMoves(st);
+  }
+
+  function apply(st, mv) {
+    const m = legalMoves(st).find(x => x.to === mv.to && (!mv.cap || !mv.cap.length || x.cap[0] === mv.cap[0]));
+    if (!m) throw new Error('Mossa non legale');
+    const board = st.board.slice();
+    m.cap.forEach(i => { board[i] = null; });
+    return { ...st, board, ire: m.to, moves: st.moves + 1, last: m, won: m.cap.includes(st.second) };
+  }
+
+  function status(st) {
+    if (st.won) return 'vinto';
+    return legalMoves(st).length ? 'in-corso' : 'bloccato';
+  }
+
+  // Risolutore. Le mosse senza cattura non tolgono bersagli, quindi per ogni insieme di bersagli
+  // si esplora la zona raggiungibile senza catturare e si provano le catture da ciascuna casella.
+  const memo = new Map();
+  // chiave numerica (37 bit di bersagli + Ire + angolo + varianti < 2^53): molto più rapida della stringa
+  const keyOf = st => { let k = 0; for (let i = 0; i < st.board.length; i++) k = k * 2 + (st.board[i] ? 1 : 0); return ((k * 64 + st.ire) * 64 + st.second) * 4 + (st.paika ? 2 : 0) + (st.fila ? 1 : 0); };
+  function zone(st) {
+    const seen = new Set([st.ire]), order = [st.ire], parent = new Map();
+    for (let k = 0; k < order.length; k++) {
+      const p = order[k];
+      if (!(st.paika || remaining(st) === 0) || captures(st, p).length) continue;
+      for (const m of quietMoves(st, p)) if (!seen.has(m.to)) { seen.add(m.to); parent.set(m.to, p); order.push(m.to); }
+    }
+    return { order, parent };
+  }
+  function after(st, m) {
+    const board = st.board.slice();
+    m.cap.forEach(i => { board[i] = null; });
+    return { ...st, board, ire: m.to, won: m.cap.includes(st.second) };
+  }
+  function winningCapture(st) {
+    const { order, parent } = zone(st);
+    for (const p of order) {
+      for (const m of captures(st, p)) {
+        if (solvable(after(st, m))) return { p, m, parent };
+      }
+    }
+    return null;
+  }
+  function solvable(st) {
+    if (st.won) return true;
+    const k = keyOf(st);
+    if (memo.has(k)) return memo.get(k);
+    memo.set(k, false);
+    const r = !!winningCapture(st);
+    memo.set(k, r);
+    return r;
+  }
+  function hint(st) {
+    if (st.won) return null;
+    const w = winningCapture(st);
+    if (!w) return null;
+    if (w.p === st.ire) return w.m;
+    let p = w.p;
+    while (w.parent.get(p) !== st.ire) p = w.parent.get(p);
+    return quietMoves(st).find(m => m.to === p);
+  }
+
+  const label = i => String.fromCharCode(65 + cells[i].y) + (1 + (cells[i].x + ROWS[cells[i].y] - 1) / 2);
+
+  return { ROWS, MID, cells, at, neighbors, CENTER, RING, BORDER, CORNERS, newGame, captures, quietMoves, legalMoves, apply, remaining, status, solvable, hint, label };
+})();
+if (typeof module !== 'undefined') module.exports = Ire;
+
+</script>
+<script>
+/* native.js — strato comune per i giochi (Esparta, Ire, Metamorphose).
+   Script classico, nessuna dipendenza: si incolla inline nella pagina.
+   In Capacitor (Android) usa i plugin Haptics, Preferences, Share, App tramite
+   window.Capacitor.Plugins, che il bridge Android popola da sé, senza bundler.
+   Altrove (browser, file://, artifact, Node) ripiega su API web, sempre in try/catch. */
+(function (root) {
+  'use strict';
+  var PREFIX = 'giochi:';
+
+  function cap() { return root.Capacitor; }
+  function isNative() {
+    try { var c = cap(); return !!(c && typeof c.isNativePlatform === 'function' && c.isNativePlatform()); }
+    catch (e) { return false; }
+  }
+  function plugin(name) {
+    if (!isNative()) return null;
+    var c = cap();
+    return (c.Plugins && c.Plugins[name]) || null;
+  }
+  function quiet(p) { if (p && typeof p.catch === 'function') p.catch(function () {}); return p; }
+
+  // ---------- vibrazione ----------
+  var WEB_PATTERN = { light: 10, medium: 20, heavy: 35, success: [12, 60, 12], error: [40, 50, 40, 50, 40], select: 6 };
+  var hapticsOn = true;
+  function haptic(kind) {
+    if (!hapticsOn) return;
+    kind = kind || 'light';
+    var H = plugin('Haptics');
+    try {
+      if (H) {
+        if (kind === 'success') return quiet(H.notification({ type: 'SUCCESS' }));
+        if (kind === 'error') return quiet(H.notification({ type: 'ERROR' }));
+        if (kind === 'warning') return quiet(H.notification({ type: 'WARNING' }));
+        if (kind === 'select') return quiet(H.selectionChanged ? H.selectionChanged({}) : H.impact({ style: 'LIGHT' }));
+        var style = kind === 'heavy' ? 'HEAVY' : kind === 'medium' ? 'MEDIUM' : 'LIGHT';
+        return quiet(H.impact({ style: style }));
+      }
+      var nav = root.navigator;
+      if (nav && typeof nav.vibrate === 'function') nav.vibrate(WEB_PATTERN[kind] || 10);
+    } catch (e) {}
+  }
+
+  // ---------- salvataggio ----------
+  var memory = {};
+  function webStore() { try { return root.localStorage || null; } catch (e) { return null; } }
+  async function save(key, obj) {
+    var s;
+    try { s = JSON.stringify(obj); } catch (e) { return false; }
+    var P = plugin('Preferences');
+    try {
+      if (P) { await P.set({ key: PREFIX + key, value: s }); return true; }
+    } catch (e) {}
+    memory[key] = s;
+    var ls = webStore();
+    try { if (ls) { ls.setItem(PREFIX + key, s); return true; } } catch (e) {}
+    return false;
+  }
+  async function load(key, fallback) {
+    var s = null;
+    var P = plugin('Preferences');
+    try { if (P) { var r = await P.get({ key: PREFIX + key }); s = r && r.value; } } catch (e) {}
+    if (s == null) { var ls = webStore(); try { if (ls) s = ls.getItem(PREFIX + key); } catch (e) {} }
+    if (s == null && Object.prototype.hasOwnProperty.call(memory, key)) s = memory[key];
+    if (s == null) return fallback === undefined ? null : fallback;
+    try { return JSON.parse(s); } catch (e) { return fallback === undefined ? null : fallback; }
+  }
+  async function remove(key) {
+    delete memory[key];
+    var P = plugin('Preferences');
+    try { if (P) await P.remove({ key: PREFIX + key }); } catch (e) {}
+    var ls = webStore(); try { if (ls) ls.removeItem(PREFIX + key); } catch (e) {}
+  }
+
+  // ---------- condivisione ----------
+  async function copyText(text) {
+    var nav = root.navigator;
+    try { if (nav && nav.clipboard && nav.clipboard.writeText) { await nav.clipboard.writeText(text); return true; } } catch (e) {}
+    try {
+      var d = root.document; if (!d || !d.body) return false;
+      var ta = d.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      d.body.appendChild(ta); ta.select();
+      var ok = d.execCommand && d.execCommand('copy');
+      d.body.removeChild(ta);
+      return !!ok;
+    } catch (e) { return false; }
+  }
+  // Ritorna 'shared' | 'copied' | 'cancelled' | 'failed'
+  async function share(opts) {
+    opts = opts || {};
+    var data = {};
+    if (opts.title) data.title = opts.title;
+    if (opts.text) data.text = opts.text;
+    if (opts.url) data.url = opts.url;
+    var S = plugin('Share');
+    if (S) {
+      try { await S.share(Object.assign({ dialogTitle: opts.title || undefined }, data)); return 'shared'; }
+      catch (e) { if (/cancel/i.test(String(e && (e.message || e)))) return 'cancelled'; }
+    }
+    var nav = root.navigator;
+    if (nav && typeof nav.share === 'function') {
+      try { await nav.share(data); return 'shared'; }
+      catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
+    }
+    var flat = [opts.title, opts.text, opts.url].filter(Boolean).join('\n');
+    return (await copyText(flat)) ? 'copied' : 'failed';
+  }
+
+  // ---------- ciclo di vita ----------
+  var pauseCbs = [], resumeCbs = [], lifeWired = false;
+  function fire(list) { list.slice().forEach(function (cb) { try { cb(); } catch (e) { console.error(e); } }); }
+  function wireLife() {
+    if (lifeWired) return; lifeWired = true;
+    var A = plugin('App');
+    if (A) {
+      // sul nativo solo gli eventi di App: con anche visibilitychange scatterebbero due volte
+      quiet(A.addListener('pause', function () { fire(pauseCbs); }));
+      quiet(A.addListener('resume', function () { fire(resumeCbs); }));
+      return;
+    }
+    var d = root.document;
+    if (d && d.addEventListener) {
+      d.addEventListener('visibilitychange', function () { fire(d.visibilityState === 'hidden' ? pauseCbs : resumeCbs); });
+      if (root.addEventListener) root.addEventListener('pagehide', function () { fire(pauseCbs); });
+    }
+  }
+  function onPause(cb) { pauseCbs.push(cb); wireLife(); return function () { pauseCbs = pauseCbs.filter(function (f) { return f !== cb; }); }; }
+  function onResume(cb) { resumeCbs.push(cb); wireLife(); return function () { resumeCbs = resumeCbs.filter(function (f) { return f !== cb; }); }; }
+
+  // ---------- tasto indietro (Android) ----------
+  // Pila di gestori: l'ultimo registrato viene chiamato per primo; se ritorna true l'evento è consumato.
+  // Se nessuno lo consuma: si chiude il primo dialogo aperto; altrimenti si chiede conferma di uscita.
+  var backStack = [], backWired = false, exitAsk = null;
+  var exitText = 'Uscire dal gioco?';
+  function closeOpenDialog() {
+    var d = root.document; if (!d || !d.querySelector) return false;
+    var dlg = d.querySelector('dialog[open]');
+    if (dlg) { try { dlg.close(); } catch (e) { dlg.removeAttribute('open'); } return true; }
+    var marked = d.querySelectorAll('[data-back-close]');
+    for (var i = marked.length - 1; i >= 0; i--) {
+      var el = marked[i];
+      if (!el.hidden && el.getAttribute('aria-hidden') !== 'true') {
+        var btn = el.getAttribute('data-back-close') && d.getElementById(el.getAttribute('data-back-close'));
+        if (btn && btn.click) btn.click(); else el.hidden = true;
+        return true;
+      }
+    }
+    return false;
+  }
+  function exitApp() { var A = plugin('App'); if (A) quiet(A.exitApp()); }
+  async function confirmExit() {
+    var ok;
+    if (exitAsk) { try { ok = await exitAsk(); } catch (e) { ok = false; } }
+    else { try { ok = root.confirm ? root.confirm(exitText) : true; } catch (e) { ok = true; } }
+    if (ok) exitApp();
+  }
+  // Dentro la collezione il gioco ha un link [data-back-nav] verso il menu: Indietro ci torna invece di uscire
+  function backToMenu(ev) {
+    var d = root.document; if (!d || !d.querySelector) return false;
+    var a = d.querySelector('[data-back-nav]'); if (!a) return false;
+    var h = root.history;
+    if (ev && ev.canGoBack && h && h.back) h.back(); else root.location.href = a.getAttribute('href');
+    return true;
+  }
+  function handleBack(ev) {
+    for (var i = backStack.length - 1; i >= 0; i--) {
+      try { if (backStack[i](ev) === true) return true; } catch (e) { console.error(e); }
+    }
+    if (closeOpenDialog()) return true;
+    if (backToMenu(ev)) return true;
+    confirmExit();
+    return false;
+  }
+  function wireBack() {
+    if (backWired) return; backWired = true;
+    var A = plugin('App');
+    // registrando backButton Android non esce più da solo: l'uscita passa da confirmExit() → App.exitApp()
+    if (A) quiet(A.addListener('backButton', handleBack));
+  }
+  function onBack(cb) { if (cb) backStack.push(cb); wireBack(); return function () { backStack = backStack.filter(function (f) { return f !== cb; }); }; }
+  function setExitConfirm(fnOrText) { if (typeof fnOrText === 'function') exitAsk = fnOrText; else if (fnOrText) exitText = String(fnOrText); }
+
+  // ---------- schermo acceso ----------
+  var lock = null, wantAwake = false;
+  async function keepAwake(on) {
+    wantAwake = on !== false;
+    var nav = root.navigator;
+    try {
+      if (wantAwake) {
+        if (!lock && nav && nav.wakeLock && nav.wakeLock.request) {
+          lock = await nav.wakeLock.request('screen');
+          lock.addEventListener && lock.addEventListener('release', function () { lock = null; });
+        }
+      } else if (lock) { await lock.release(); lock = null; }
+      return !!lock;
+    } catch (e) { lock = null; return false; }
+  }
+  onResume(function () { if (wantAwake) keepAwake(true); });
+
+  var Native = {
+    get isNative() { return isNative(); },
+    platform: function () { try { var c = cap(); return c && c.getPlatform ? c.getPlatform() : 'web'; } catch (e) { return 'web'; } },
+    haptic: haptic,
+    setHaptics: function (on) { hapticsOn = !!on; },
+    save: save, load: load, remove: remove,
+    share: share, copyText: copyText,
+    onPause: onPause, onResume: onResume,
+    onBack: onBack, setExitConfirm: setExitConfirm, handleBack: handleBack, exitApp: exitApp,
+    keepAwake: keepAwake,
+    _reset: function () { memory = {}; backStack = []; pauseCbs = []; resumeCbs = []; lifeWired = backWired = false; exitAsk = null; }
+  };
+  root.Native = Native;
+  if (typeof module !== 'undefined' && module.exports) module.exports = Native;
+})(typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this);
+
+/* worker.js — esegue la mossa dell'IA in un Web Worker creato da Blob URL (nessun file separato).
+   Uso:
+     const ai = NativeWorker.create({ source: [engineText], call: 'Metamorphose.bestAction', local: (s, l) => Metamorphose.bestAction(s, l) });
+     const r = await ai.run([st, level], { timeout: 8000 });   // r = { value, via: 'worker'|'main' }
+   - `source`: testo (o array di testi) che definisce le funzioni nel worker: di solito il contenuto dello
+     <script id="engine">. Una funzione serializzata con toString() perderebbe le chiusure, perciò si passa il sorgente.
+   - `call`: espressione valutata nel worker che dà la funzione da chiamare (es. 'EspartaAI.choose').
+   - `local`: la stessa funzione sul thread principale, usata se il Worker non è disponibile
+     (Node, CSP che blocca blob:, errore di avvio).
+   - argomenti e risultato devono essere clonabili (dati semplici: niente funzioni, niente istanze di classe).
+   - al timeout il worker viene terminato e la promessa è rifiutata con err.timeout = true
+     (o risolta con il valore di opts.onTimeout(), se fornito). NON si rilancia sul thread principale:
+     raddoppierebbe il blocco. */
+(function (root) {
+  'use strict';
+
+  var BOOT = '\n;(function(){var __f=(%CALL%);self.onmessage=function(e){var d=e.data;' +
+    'try{Promise.resolve(__f.apply(null,d.args)).then(function(v){self.postMessage({id:d.id,ok:true,value:v})},' +
+    'function(err){self.postMessage({id:d.id,ok:false,error:String(err&&err.stack||err)})})}' +
+    'catch(err){self.postMessage({id:d.id,ok:false,error:String(err&&err.stack||err)})}};' +
+    'self.postMessage({ready:true})})();\n';
+
+  function workerSupported() {
+    return typeof root.Worker === 'function' && typeof root.Blob === 'function' &&
+      root.URL && typeof root.URL.createObjectURL === 'function';
+  }
+
+  function defer(fn) { return new Promise(function (res, rej) { setTimeout(function () { try { res(fn()); } catch (e) { rej(e); } }, 0); }); }
+
+  function create(opts) {
+    var sources = [].concat(opts.source || []);
+    var callExpr = opts.call;
+    var local = opts.local;
+    var broken = !workerSupported() || !callExpr;
+    var w = null, url = null, seq = 0, pending = {};
+
+    function kill() {
+      if (w) { try { w.terminate(); } catch (e) {} w = null; }
+      if (url) { try { root.URL.revokeObjectURL(url); } catch (e) {} url = null; }
+    }
+    function failAll(reason) {
+      var ids = Object.keys(pending);
+      ids.forEach(function (id) { var p = pending[id]; delete pending[id]; p.fallback(reason); });
+    }
+    function spawn() {
+      if (w) return w;
+      var code = sources.join('\n;\n') + BOOT.replace('%CALL%', callExpr);
+      url = root.URL.createObjectURL(new root.Blob([code], { type: 'text/javascript' }));
+      w = new root.Worker(url);
+      w.onmessage = function (e) {
+        var d = e.data || {};
+        if (d.ready) { if (url) { try { root.URL.revokeObjectURL(url); } catch (x) {} url = null; } return; }
+        var p = pending[d.id]; if (!p) return;
+        delete pending[d.id];
+        if (d.ok) p.resolve({ value: d.value, via: 'worker' }); else p.reject(new Error(d.error));
+      };
+      w.onerror = function (e) {
+        // errore di caricamento (CSP, sintassi): il worker non è usabile, si passa al thread principale
+        if (e && e.preventDefault) e.preventDefault();
+        broken = true; kill(); failAll(e && e.message);
+      };
+      return w;
+    }
+    function runMain(args) {
+      if (typeof local !== 'function') return Promise.reject(new Error('Worker non disponibile e nessuna funzione locale'));
+      return defer(function () { return local.apply(null, args); }).then(function (v) { return { value: v, via: 'main' }; });
+    }
+
+    function run(args, o) {
+      args = args || []; o = o || {};
+      var timeout = o.timeout == null ? (opts.timeout || 10000) : o.timeout;
+      if (broken) return runMain(args);
+      return new Promise(function (resolve, reject) {
+        var id = ++seq, timer = null, settled = false;
+        function done(fn, v) { if (settled) return; settled = true; if (timer) clearTimeout(timer); fn(v); }
+        pending[id] = {
+          resolve: function (v) { done(resolve, v); },
+          reject: function (e) { done(reject, e); },
+          fallback: function () { if (settled) return; if (timer) clearTimeout(timer); runMain(args).then(function (v) { done(resolve, v); }, function (e) { done(reject, e); }); }
+        };
+        try { spawn().postMessage({ id: id, args: args }); }
+        catch (e) { broken = true; kill(); delete pending[id]; return runMain(args).then(resolve, reject); }
+        if (timeout > 0) timer = setTimeout(function () {
+          if (settled) return;
+          delete pending[id];
+          kill(); failAll('restart'); // il worker è bloccato: lo si termina, un nuovo run ne crea uno fresco
+          if (typeof o.onTimeout === 'function' || typeof opts.onTimeout === 'function') {
+            var f = o.onTimeout || opts.onTimeout;
+            try { done(resolve, { value: f(), via: 'timeout' }); } catch (e) { done(reject, e); }
+          } else { var err = new Error('IA: tempo scaduto (' + timeout + ' ms)'); err.timeout = true; done(reject, err); }
+        }, timeout);
+      });
+    }
+
+    return {
+      run: run,
+      cancel: function () { var ids = Object.keys(pending); kill(); ids.forEach(function (id) { var p = pending[id]; delete pending[id]; var e = new Error('annullato'); e.cancelled = true; p.reject(e); }); },
+      dispose: function () { this.cancel(); },
+      get usingWorker() { return !broken; }
+    };
+  }
+
+  var NativeWorker = { create: create, supported: workerSupported };
+  root.NativeWorker = NativeWorker;
+  if (root.Native) root.Native.worker = NativeWorker;
+  if (typeof module !== 'undefined' && module.exports) module.exports = NativeWorker;
+})(typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this);
+
+</script>
+<script>
+(() => {
+  const E = Ire, NS = 'http://www.w3.org/2000/svg', T = I18N.t;
+  const ABBR = kind => T(kind === 'avvicinamento' ? 'abbr.avv' : 'abbr.all');
+  const caps = c => '×' + c.map(E.label).join(' ×');
+  // Le voci del registro sono dati, non testo: così si ritraducono quando cambia la lingua
+  function logText(e) {
+    if (typeof e === 'string') return e;
+    const move = `${E.label(e.from)}–${E.label(e.to)}  `;
+    if (e.t === 'p') return move + (e.cap.length ? `${caps(e.cap)}  ${ABBR(e.kind)}` : T(e.walk ? 'log.walk' : 'log.quiet'));
+    let note = '';
+    if (e.note) note = e.note.k === 'should'
+      ? T('note.should', { list: e.note.alts.map(m => m.cap.map(E.label).join(' ') + ` (${ABBR(m.kind)})`).join(T('note.or')) })
+      : T('note.' + e.note.k);
+    return `${e.ok ? '✓' : '✗'} ${move}${e.caps.length ? caps(e.caps) : T('log.noCap')}${e.ok ? '' : '  ← ' + note}`;
+  }
+  const U = 30, H = U * Math.sqrt(3), M = 40;
+  const svg = document.getElementById('board');
+  svg.setAttribute('viewBox', `${-6 * U - M} ${-M} ${12 * U + 2 * M} ${6 * H + 2 * M}`);
+  const P = i => [E.cells[i].x * U, E.cells[i].y * H];
+  const el = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+
+  const defs = el('defs', {}, svg);
+  const grad = (id, stops, cx = '35%', cy = '30%', r = '75%') => {
+    const g = el('radialGradient', { id, cx, cy, r }, defs);
+    stops.forEach(([o, c, a = 1]) => el('stop', { offset: o, 'stop-color': c, 'stop-opacity': a }, g));
+  };
+  grad('gT', [['0%', '#9fd39a', .9], ['25%', '#2f6a3c'], ['100%', '#0f2c18']]);
+  grad('gI', [['0%', '#ffffff'], ['55%', '#e9ece6'], ['100%', '#b9c0b6']]);
+  grad('gS', [['55%', '#000', .35], ['100%', '#000', 0]], '50%', '50%', '50%');
+
+  // Tabellone: esagono di noce con scanalature chiare
+  const hex = [[-3, 0], [3, 0], [6, 3], [3, 6], [-3, 6], [-6, 3]].map(([x, y]) => `${x * U},${y * H}`).join(' ');
+  el('polygon', { points: hex, fill: 'var(--walnut-edge)', stroke: 'var(--walnut-edge)', 'stroke-width': 2 * M - 6, 'stroke-linejoin': 'round', transform: 'translate(0,4)' }, svg);
+  el('polygon', { points: hex, fill: 'var(--walnut)', stroke: 'var(--walnut)', 'stroke-width': 2 * M - 8, 'stroke-linejoin': 'round' }, svg);
+  const gr = el('g', { stroke: 'var(--groove)', 'stroke-width': 5, 'stroke-linecap': 'round', opacity: '.85' }, svg);
+  E.cells.forEach((c, i) => E.neighbors(i).forEach(j => { if (j > i) { const [a, b] = P(i), [x, y] = P(j); el('line', { x1: a, y1: b, x2: x, y2: y }, gr); } }));
+  const holes = el('g', {}, svg);
+  E.cells.forEach((c, i) => { const [x, y] = P(i); el('circle', { cx: x, cy: y, r: U * .5, fill: 'var(--groove)' }, holes); el('circle', { cx: x, cy: y + 2, r: U * .36, fill: '#c9a575', opacity: '.6' }, holes); });
+  const ghostL = el('g', {}, svg), pieceL = el('g', {}, svg), topL = el('g', {}, svg), hitL = el('g', {}, svg);
+  const hits = E.cells.map((c, i) => {
+    const [x, y] = P(i);
+    const g = el('g', { class: 'cell' }, hitL);
+    el('circle', { class: 'hit', cx: x, cy: y, r: U * .95, fill: 'transparent' }, g);
+    g.addEventListener('click', () => onCell(i));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onCell(i); } });
+    return g;
+  });
+
+  const marble = (i, kind) => {
+    const [x, y] = P(i);
+    el('circle', { cx: x + 2, cy: y + 5, r: U * .82, fill: 'url(#gS)' }, pieceL);
+    el('circle', { cx: x, cy: y, r: U * .74, fill: kind === 'T' ? 'url(#gT)' : 'url(#gI)' }, pieceL);
+    if (kind !== 'T') el('path', { d: `M${x + U * .25},${y - U * .1} q${U * .2},${U * .15} ${U * .1},${U * .45}`, stroke: '#c0392b', 'stroke-width': 3, fill: 'none', 'stroke-linecap': 'round', opacity: '.8' }, pieceL);
+  };
+
+  let st, hist, log, hints, hintMove, pending = null, copied = false;
+  const $ = id => document.getElementById(id);
+  const SAVE = 'ire.partita.v7';
+  const N = window.Native, HAPT = 'ire.vibrazione';
+  try { N.setHaptics(localStorage.getItem(HAPT) !== '0'); } catch (e) {}
+  const snap = () => JSON.parse(JSON.stringify({ st, log, hints }));
+  function save() { try { localStorage.setItem(SAVE, JSON.stringify(snap())); } catch (e) {} }
+  function load() { try { const d = JSON.parse(localStorage.getItem(SAVE)); return d && d.st && d.st.board && 'fila' in d.st ? d : null; } catch (e) { return null; } }
+  function fresh() { st = E.newGame(E.at(-3, 0)); hist = []; log = []; hints = 0; hintMove = null; pending = null; }
+
+  // Modalità registrazione: mosse libere, confrontate con le regole
+  let rec = false, rDest = null;
+  const rCaps = new Set();
+  function recCell(i) {
+    if (st.won || i === st.ire) return;
+    if (st.board[i] === 'T' || i === st.second) { rCaps.has(i) ? rCaps.delete(i) : rCaps.add(i); }
+    else rDest = rDest === i ? null : i;
+    render();
+  }
+  function recConfirm() {
+    if (rDest === null) { $('status').innerHTML = T('rec.needDest'); return; }
+    const taken = [...rCaps].sort((a, b) => a - b);
+    const legal = E.captures(st);
+    const same = m => m.to === rDest && m.cap.length === taken.length && [...m.cap].sort((a, b) => a - b).every((v, k) => v === taken[k]);
+    const ok = legal.some(same);
+    let note = null;
+    if (!ok) {
+      const here = legal.filter(m => m.to === rDest);
+      if (!E.neighbors(st.ire).includes(rDest)) note = { k: 'far' };
+      else if (!here.length) note = { k: 'none' };
+      else note = { k: 'should', alts: here.map(m => ({ cap: m.cap.slice(), kind: m.kind })) };
+    }
+    hist.push(snap());
+    const from = st.ire, board = st.board.slice();
+    taken.forEach(i => { if (i !== st.second) board[i] = null; });
+    st = { ...st, board, ire: rDest, moves: st.moves + 1, won: taken.includes(st.second) };
+    log.push({ t: 'r', ok, from, to: rDest, caps: taken, note });
+    rDest = null; rCaps.clear();
+    render();
+  }
+  function setRec(on) {
+    rec = on; rDest = null; rCaps.clear(); pending = null; hintMove = null;
+    render();
+  }
+
+  function onCell(i) {
+    if (rec) return recCell(i);
+    const s = E.status(st);
+    if (s !== 'in-corso') return;
+    if (pending !== null) {
+      const mv = E.legalMoves(st).find(m => m.to === pending && m.cap.includes(i));
+      pending = null;
+      return mv ? play(mv) : render();
+    }
+    if (st.moves === 0 && E.CORNERS.includes(i) && i !== st.second && st.board[i]) {
+      st = E.newGame(i); hintMove = null; return render();
+    }
+    const opts = E.legalMoves(st).filter(m => m.to === i);
+    if (opts.length === 1) play(opts[0]);
+    else if (opts.length > 1) { pending = i; N.haptic('select'); render(); }
+  }
+
+  function play(mv) {
+    hist.push(snap());
+    st = E.apply(st, mv);
+    const after = E.status(st);
+    N.haptic(after === 'vinto' ? 'success' : after === 'bloccato' || after === 'separate' ? 'error' : mv.cap.length ? 'medium' : 'light');
+    log.push({ t: 'p', from: mv.from, to: mv.to, cap: mv.cap.slice(), kind: mv.kind, walk: E.remaining(st) === 0 });
+    hintMove = null; pending = null;
+    render(mv);
+  }
+
+  function render(justPlayed) {
+    [ghostL, pieceL, topL].forEach(g => g.replaceChildren());
+    const s = E.status(st), legal = s === 'in-corso' ? E.legalMoves(st) : [];
+    if (justPlayed) justPlayed.cap.forEach(i => { const [x, y] = P(i); el('circle', { cx: x, cy: y, r: U * .74, fill: i === st.second ? 'url(#gI)' : 'url(#gT)', class: 'ghost' }, ghostL); });
+    st.board.forEach((p, i) => { if (p) marble(i, 'T'); });
+    marble(st.ire, 'I'); if (!st.won) marble(st.second, 'I');
+    if (!st.won) { const [x, y] = P(st.second); el('circle', { cx: x, cy: y, r: U * .86, fill: 'none', stroke: 'var(--board-hint)', 'stroke-width': 1.5, 'stroke-dasharray': '3 4' }, topL); }
+    if (st.moves === 0 && s === 'in-corso' && pending === null) E.CORNERS.forEach(i => { if (i !== st.second) { const [x, y] = P(i); el('circle', { cx: x, cy: y, r: U * .86, fill: 'none', stroke: 'var(--board-hint)', 'stroke-width': 1, opacity: '.35' }, topL); } });
+    const ring = (i, color = 'var(--board-hint)') => { const [x, y] = P(i); el('circle', { cx: x, cy: y, r: U * .86, fill: 'none', stroke: color, 'stroke-width': 3, 'stroke-dasharray': '6 4' }, topL); };
+    if (rec) {
+      if (rDest !== null) { const [x, y] = P(rDest); el('circle', { cx: x, cy: y, r: U * .34, fill: 'var(--board-hint)', stroke: '#fff', 'stroke-width': 3 }, topL); }
+      rCaps.forEach(i => ring(i, '#ff7a5c'));
+    } else if (pending !== null) {
+      const [x, y] = P(pending);
+      el('circle', { cx: x, cy: y, r: U * .34, fill: 'var(--board-hint)', stroke: '#fff', 'stroke-width': 3 }, topL);
+      legal.filter(m => m.to === pending).forEach(m => m.cap.forEach(ring));
+    } else {
+      [...new Set(legal.map(m => m.to))].forEach(to => {
+        const [x, y] = P(to);
+        const isHint = hintMove && hintMove.to === to;
+        const quiet = legal.every(m => !m.cap.length);
+        el('circle', { cx: x, cy: y, r: U * (isHint ? .34 : .24), fill: quiet && !isHint ? 'none' : 'var(--board-hint)', stroke: isHint ? '#fff' : quiet ? 'var(--board-hint)' : 'none', 'stroke-width': 3 }, topL);
+      });
+      if (hintMove) hintMove.cap.forEach(ring);
+    }
+    const dest = new Set(pending !== null ? legal.filter(m => m.to === pending).flatMap(m => m.cap) : legal.map(m => m.to));
+    hits.forEach((g, i) => {
+      const act = rec ? (!st.won && i !== st.ire) : dest.has(i) || (pending === null && st.moves === 0 && s === 'in-corso' && E.CORNERS.includes(i) && i !== st.second && !!st.board[i]);
+      g.classList.toggle('act', act);
+      if (act) g.setAttribute('tabindex', '0'); else g.removeAttribute('tabindex');
+      g.setAttribute('role', act ? 'button' : 'presentation');
+      g.setAttribute('aria-label', `${E.label(i)}${dest.has(i) ? T('aria.move') : ''}`);
+    });
+
+    $('nLeft').textContent = E.remaining(st);
+    $('nMoves').textContent = st.moves;
+    $('nHints').textContent = hints;
+    const card = $('mainCard');
+    card.classList.toggle('end-win', s === 'vinto');
+    card.classList.toggle('end-lose', s === 'bloccato' || s === 'separate');
+    const n = E.remaining(st);
+    let msg;
+    if (rec) msg = st.won ? T('msg.recWon') : `${T(rDest === null ? 'msg.recDest' : 'msg.recCaps')} ${T('msg.left', { n })}`;
+    else if (s === 'vinto') msg = T('msg.won', { n: st.moves });
+    else if (s === 'separate') msg = T('msg.separate');
+    else if (s === 'bloccato') msg = T('msg.blocked', { n });
+    else if (pending !== null) msg = T('msg.pending');
+    else if (st.moves === 0) msg = T('msg.start');
+    else if (legal.every(m => !m.cap.length)) msg = T(n === 0 ? 'msg.walk' : 'msg.quiet');
+    else if (n === 0) msg = T('msg.lastCap');
+    else msg = T('msg.play');
+    if (!rec && s === 'in-corso' && $('showSolv').checked) {
+      msg += E.solvable(st) ? ` <span class="chip ok">${T('chip.ok')}</span>` : ` <span class="chip ko">${T('chip.ko')}</span>`;
+    }
+    $('status').innerHTML = msg;
+    $('btnUndo').disabled = hist.length === 0;
+    $('btnHint').disabled = rec || s !== 'in-corso';
+    $('btnRec').textContent = T(rec ? 'btn.recStop' : 'btn.rec');
+    $('btnRecOk').hidden = !rec || st.won;
+    $('btnCopy').hidden = !log.length;
+    if (!copied) $('btnCopy').textContent = T(N.isNative ? 'btn.share' : 'btn.copy');
+    card.classList.toggle('end-lose', !rec && (s === 'bloccato' || s === 'separate'));
+    const ol = $('log'); ol.replaceChildren();
+    log.forEach(e => { const li = document.createElement('li'); li.textContent = logText(e); ol.appendChild(li); });
+    $('logEmpty').hidden = log.length > 0;
+    ol.scrollTop = ol.scrollHeight;
+    save();
+  }
+
+  $('btnHint').addEventListener('click', () => {
+    const h = E.hint(st);
+    if (!h) { N.haptic('warning'); $('status').innerHTML = `<span class="chip ko">${T('chip.ko')}</span> ${T('msg.noSolution')}`; return; }
+    pending = null;
+    hints++; hintMove = h; render();
+  });
+  $('btnUndo').addEventListener('click', () => { if (hist.length) { ({ st, log, hints } = hist.pop()); hintMove = null; pending = null; rDest = null; rCaps.clear(); render(); } });
+  // Ricomincia subito; «Annulla» riporta la partita di prima
+  $('btnNew').addEventListener('click', () => { const h = hist.concat([snap()]); fresh(); hist = h; rDest = null; rCaps.clear(); render(); });
+  $('btnRec').addEventListener('click', () => setRec(!rec));
+  $('btnRecOk').addEventListener('click', recConfirm);
+  $('btnCopy').addEventListener('click', () => {
+    const text = T('copy.head', { cell: E.label(st.second) }) + '\n' + log.map((e, k) => `${k + 1}. ${logText(e)}`).join('\n');
+    const done = () => { copied = true; $('btnCopy').textContent = T('btn.copied'); setTimeout(() => { copied = false; render(); }, 1500); };
+    const fail = () => { $('status').innerHTML = T('copy.fail'); };
+    // Sul telefono si apre il pannello di condivisione (WhatsApp, email…); nel browser si copia
+    if (N.isNative) N.share({ title: 'Ire', text }).then(r => { if (r === 'copied') done(); else if (r === 'failed') fail(); });
+    else N.copyText(text).then(ok => ok ? done() : fail());
+  });
+  $('optHaptics').checked = N && (() => { try { return localStorage.getItem(HAPT) !== '0'; } catch (e) { return true; } })();
+  $('optHaptics').addEventListener('change', e => {
+    N.setHaptics(e.target.checked);
+    try { localStorage.setItem(HAPT, e.target.checked ? '1' : '0'); } catch (err) {}
+    if (e.target.checked) N.haptic('light');
+  });
+  // Indietro (Android): annulla la scelta della biglia, poi esce dalla registrazione; altrimenti torna al menu
+  N.onBack(() => {
+    if (pending !== null) { pending = null; render(); return true; }
+    if (rec) { setRec(false); return true; }
+  });
+  N.onPause(() => N.save('ire:partita', snap()));
+  N.keepAwake(true);
+  // Sul telefono la scheda sta sopra il tabellone: se il messaggio cambia numero di righe il tabellone salta.
+  // Si riserva l'altezza del messaggio più lungo nella lingua e nella larghezza attuali.
+  function reserveStatus() {
+    const el = $('status'), probe = el.cloneNode(false);
+    probe.removeAttribute('id');
+    probe.style.cssText = `position:absolute;visibility:hidden;left:0;top:0;width:${el.clientWidth}px;min-height:0`;
+    el.parentNode.appendChild(probe);
+    const chip = ` <span class="chip ko">${T('chip.ko')}</span>`;
+    let h = 0;
+    for (const k of ['msg.start', 'msg.play', 'msg.pending', 'msg.walk', 'msg.quiet', 'msg.lastCap', 'msg.won', 'msg.separate', 'msg.blocked']) {
+      probe.innerHTML = T(k, { n: 29 }) + chip;
+      h = Math.max(h, probe.offsetHeight);
+    }
+    probe.remove();
+    el.style.minHeight = h ? h + 'px' : '';
+  }
+  addEventListener('resize', reserveStatus);
+  $('showSolv').addEventListener('change', () => render());
+  I18N.onChange(() => { reserveStatus(); render(); });
+
+  function start(data) {
+    if (!(data && data.st)) data = load();
+    if (data && data.st) { ({ st, log, hints } = data); hist = []; hintMove = null; }
+    else {
+      fresh();
+      N.load('ire:partita').then(d => {
+        if (d && d.st && d.st.board && 'fila' in d.st && !hist.length && !log.length) { ({ st, log, hints } = d); hintMove = null; render(); }
+      });
+    }
+    render();
+  }
+  I18N.mount();
+  reserveStatus();
+  document.fonts?.ready.then(reserveStatus);
+  window.claude?.hot?.snapshot?.(() => snap());
+  window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
+
+<link rel="stylesheet" href="../tema/tema.css">
+<style>
+.ml-sign { max-width: 1080px; margin: 28px auto 0; padding: 0 16px; text-align: center; color: var(--muted); font-size: .88rem; }
+.ml-sign b { font-family: var(--f-display); color: var(--ink); }
+.ml-sign a { color: inherit; }
+</style>
+<p class="ml-sign" id="mlSign"></p>
+<script>
+(() => {
+  const T = {"it":"<b>Ire</b> fa parte di <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · un gioco di Luis Fernando Marcelino","pt":"<b>Ire</b> faz parte de <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · um jogo de Luis Fernando Marcelino","en":"<b>Ire</b> is part of <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · a game by Luis Fernando Marcelino","es":"<b>Ire</b> forma parte de <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · un juego de Luis Fernando Marcelino"};
+  const L = typeof I18N !== 'undefined' ? I18N : null;
+  const show = () => { document.getElementById('mlSign').innerHTML = T[String(L && L.lang || 'en').slice(0, 2)] || T.en; };
+  L && L.onChange && L.onChange(show);
+  show();
+})();
+</script>
+</body>
+</html>

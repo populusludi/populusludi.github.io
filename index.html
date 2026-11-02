@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Populus Ludi — Think ahead</title>
-<meta name="description" content="Six original board games and puzzles by Luis Fernando Marcelino, born in Brazil. Play Esparta and Ire free in your browser.">
+<meta name="description" content="Six original board games and puzzles by Luis Fernando Marcelino, born in Brazil. Play Esparta and Travessia free in your browser.">
 <meta property="og:title" content="Populus Ludi — Think ahead">
-<meta property="og:description" content="Six original board games and puzzles, born in Brazil. Play Esparta and Ire free in your browser.">
+<meta property="og:description" content="Six original board games and puzzles, born in Brazil. Play Esparta and Travessia free in your browser.">
 <meta property="og:image" content="img/collezione.png">
 <meta property="og:type" content="website">
 <link rel="icon" href="img/collezione.png">
@@ -17,7 +17,7 @@
 @font-face { font-family: "Alegreya Sans"; font-weight: 400; font-display: swap; src: url(esparta/fonts/alegreya-sans-latin-400-normal.woff2) format("woff2"); }
 @font-face { font-family: "Alegreya Sans"; font-weight: 500; font-display: swap; src: url(esparta/fonts/alegreya-sans-latin-500-normal.woff2) format("woff2"); }
 @font-face { font-family: "Alegreya Sans"; font-weight: 700; font-display: swap; src: url(esparta/fonts/alegreya-sans-latin-700-normal.woff2) format("woff2"); }
-@font-face { font-family: "Cormorant Garamond"; font-weight: 600; font-display: swap; src: url(ire/fonts/cormorant-garamond-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 600; font-display: swap; src: url(fonts/cormorant-garamond-latin-600-normal.woff2) format("woff2"); }
 :root {
   --bg: #ebe7df; --surface: #f7f4ee; --ink: #26211c; --muted: #6d6458; --line: #d6cdbf;
   --walnut: #5a3a22; --shadow: rgba(70, 45, 20, .16);
@@ -104,10 +104,10 @@ footer a { color: inherit; }
         <div><h3>Esparta</h3><p data-i18n="esparta.d"></p>
           <div class="meta"><span class="chip play" data-i18n="free"></span><span class="chip" data-i18n="p2cpu"></span></div></div>
       </a></li>
-      <li><a class="game" href="ire/index.html">
-        <img src="img/ire.png" alt="">
-        <div><h3>Ire</h3><p data-i18n="ire.d"></p>
-          <div class="meta"><span class="chip play" data-i18n="free"></span><span class="chip" data-i18n="p1"></span></div></div>
+      <li><a class="game" href="transporte/index.html">
+        <img src="img/transporte.png" alt="">
+        <div><h3>Travessia</h3><p data-i18n="transporte.d"></p>
+          <div class="meta"><span class="chip play" data-i18n="free"></span><span class="chip" data-i18n="p12coop"></span></div></div>
       </a></li>
     </ul>
   </section>
@@ -132,9 +132,9 @@ footer a { color: inherit; }
           <div class="meta"><span class="chip" data-i18n="p24cpu"></span></div></div>
       </div></li>
       <li><div class="game">
-        <img src="img/transporte.png" alt="">
-        <div><h3>Travessia</h3><p data-i18n="transporte.d"></p>
-          <div class="meta"><span class="chip" data-i18n="p12coop"></span></div></div>
+        <img src="img/ire.png" alt="">
+        <div><h3>Ire</h3><p data-i18n="ire.d"></p>
+          <div class="meta"><span class="chip" data-i18n="p1"></span></div></div>
       </div></li>
     </ul>
   </section>
@@ -231,7 +231,7 @@ footer a { color: inherit; }
   function setLang(l) {
     lang = l;
     put('collezione.lingua', l);
-    ['esparta', 'ire'].forEach(g => put(g + '.lingua', l));
+    ['esparta', 'transporte'].forEach(g => put(g + '.lingua', l));
     apply();
   }
   sel.replaceChildren(...Object.keys(LANGS).map(k => { const o = document.createElement('option'); o.value = k; o.lang = LANGS[k][0]; o.textContent = LANGS[k][1]; return o; }));

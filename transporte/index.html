@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#ebe7df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1816" media="(prefers-color-scheme: dark)">
+<style>@font-face{font-family:"Zilla Slab";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/zilla-slab-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Zilla Slab";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/zilla-slab-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito Sans";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/nunito-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito Sans";font-style:italic;font-weight:400;font-display:swap;src:url(fonts/nunito-sans-latin-400-italic.woff2) format("woff2")}
+@font-face{font-family:"Nunito Sans";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/nunito-sans-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito Sans";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/nunito-sans-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2")}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{margin:0;overscroll-behavior:none}
+[hidden]{display:none!important}</style>
+<style>.back-menu{align-self:center;font:400 2.2rem/1 Georgia,serif;color:inherit;text-decoration:none;padding:0 6px 4px 2px;margin-left:-4px;-webkit-tap-highlight-color:transparent}.back-menu:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:4px}</style>
+</head>
+<body>
+<title>Travessia · Populus Ludi</title>
+<style>
+/* Layout: la tavola esagonale di legno al centro; a fianco (sotto, sul telefono) il turno, i comandi e le regole. Il bordo della tavola indica dove deve arrivare ogni colore. */
+:root {
+  --bg: #e9e6df;
+  --surface: #f5f3ee;
+  --ink: #1f2322;
+  --muted: #5e6563;
+  --line: #d0ccc2;
+  --accent: #1e6662;
+  --accent-ink: #f4fbfa;
+  --bad: #a63a24;
+  --good: #2c7a3d;
+  --wood: #a9784a;
+  --wood-dark: #8a5d33;
+  --wood-edge: #5e3d1e;
+  --hole: #ffffff;
+  --hole-edge: #7d5a37;
+  --hole-in: #ece7de;
+  --light: #eccf98; --light-edge: #a07a3e; --light-ink: #3a2e1c;
+  --dark: #2c1f17; --dark-edge: #0e0806; --dark-ink: #f4ecdc;
+  --target: #1e6662;
+  --f-display: "Zilla Slab", Rockwell, Georgia, serif;
+  --f-body: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --shadow: rgba(60, 35, 10, .3);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161a19; --surface: #202524; --ink: #e8ece9; --muted: #9aa5a1; --line: #343b39;
+    --accent: #5fc0b6; --accent-ink: #0c1f1d; --bad: #f08b75; --good: #7fcf8d;
+    --wood: #8a6238; --wood-dark: #6f4b27; --wood-edge: #3f2912; --hole: #f4f1ea; --hole-edge: #3f2912; --hole-in: #e2ddd2;
+    --target: #7fe0d4; --shadow: rgba(0, 0, 0, .55); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161a19; --surface: #202524; --ink: #e8ece9; --muted: #9aa5a1; --line: #343b39;
+  --accent: #5fc0b6; --accent-ink: #0c1f1d; --bad: #f08b75; --good: #7fcf8d;
+  --wood: #8a6238; --wood-dark: #6f4b27; --wood-edge: #3f2912; --hole: #f4f1ea; --hole-edge: #3f2912; --hole-in: #e2ddd2;
+  --target: #7fe0d4; --shadow: rgba(0, 0, 0, .55); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--f-body); margin: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 18px 40px; display: grid; gap: 18px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+h1 { font: 700 2.1rem/1 var(--f-display); margin: 0; letter-spacing: .01em; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); flex: 1 1 260px; min-width: 0; }
+.main { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.boardbox { min-width: 0; display: grid; gap: 8px; }
+svg.board { width: 100%; height: auto; display: block; max-width: 640px; margin-inline: auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; color: var(--muted); font-size: .85rem; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chip { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1.5px solid; flex: none; }
+.chip.l { background: var(--light); border-color: var(--light-edge); }
+.chip.d { background: var(--dark); border-color: var(--dark-edge); box-shadow: 0 0 0 1.5px var(--muted); }
+.side { display: grid; gap: 14px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.panel h2 { font: 700 1.05rem/1.2 var(--f-display); margin: 0; }
+.turn { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; }
+.turn .chip { width: 22px; height: 22px; border-width: 2px; }
+.turn strong { font-weight: 700; }
+.msg { margin: 0; min-height: 1.5em; color: var(--muted); }
+.msg.bad { color: var(--bad); font-weight: 600; }
+.msg.good { color: var(--good); font-weight: 700; }
+.countdown { display: flex; align-items: baseline; gap: 10px; padding: 10px 12px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); }
+.countdown b { font: 500 2.4rem/1 var(--f-mono); font-variant-numeric: tabular-nums; color: var(--accent); min-width: 2.4ch; text-align: right; }
+.countdown small { color: var(--muted); font-size: .85rem; min-width: 0; }
+.countdown.zero b { color: var(--good); }
+.countdown.over { border-color: var(--bad); }
+.countdown.over b { color: var(--bad); }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.stat { display: grid; gap: 2px; }
+.stat b { font: 500 1.35rem/1.1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.stat small { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; }
+button { font: 600 .92rem/1 var(--f-body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 13px; cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.langsel { margin-left: auto; align-self: center; font: inherit; font-size: .9rem; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.langsel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; background: transparent; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.replay { display: grid; gap: 8px; }
+.note { color: var(--muted); font-size: .86rem; margin: 0; }
+ol.rules { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 65ch; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+/* tavola */
+.rim-l { fill: var(--light); stroke: var(--light-edge); stroke-width: 1.5; }
+.rim-d { fill: var(--dark); stroke: var(--dark-edge); stroke-width: 1.5; }
+.plate { fill: var(--wood); stroke: var(--wood-edge); stroke-width: 2; }
+.grain { stroke: var(--wood-dark); stroke-width: 1; fill: none; opacity: .35; }
+.hole { fill: var(--hole); stroke: var(--hole-edge); stroke-width: 1.5; }
+.hole-in { fill: var(--hole-in); }
+.cell { cursor: pointer; }
+.target { fill: none; stroke: var(--target); stroke-width: 3.5; stroke-dasharray: 5 4; pointer-events: none; }
+.trail { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; opacity: .55; fill: none; pointer-events: none; }
+.piece { transition: transform .26s ease; pointer-events: none; }
+.piece circle.body { stroke-width: 2.5; }
+.piece.l circle.body { fill: var(--light); stroke: var(--light-edge); }
+.piece.d circle.body { fill: var(--dark); stroke: var(--dark-edge); }
+.piece circle.ring { fill: none; stroke: none; }
+.piece circle.shine { fill: #fff; opacity: .18; }
+.piece.sel circle.body { stroke: var(--target); stroke-width: 4.5; }
+.piece.can circle.ring { fill: none; stroke: var(--target); stroke-width: 1.5; opacity: .55; }
+@media (prefers-reduced-motion: reduce) { .piece { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+  <a class="back-menu" href="../index.html" data-back-nav aria-label="Menu">‹</a>
+    <h1>Travessia</h1>
+    <select id="selLang" class="langsel" data-i18n-aria="lang.label"></select>
+    <p data-i18n="sub"></p>
+  </header>
+  <div class="main">
+    <div class="boardbox">
+      <svg class="board" id="board" viewBox="-250 -222 500 444" role="img" data-i18n-aria="board.aria"></svg>
+      <div class="legend">
+        <span><i class="chip l"></i><span data-i18n="legend.l"></span></span>
+        <span><i class="chip d"></i><span data-i18n="legend.d"></span></span>
+      </div>
+    </div>
+    <div class="side">
+      <section class="panel" aria-live="polite">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <h2 data-i18n="game.title"></h2>
+          <div class="seg" role="group" data-i18n-aria="mode.aria">
+            <button id="m-solo" aria-pressed="true" data-i18n="mode.solo"></button>
+            <button id="m-due" aria-pressed="false" data-i18n="mode.duo"></button>
+          </div>
+        </div>
+        <div class="turn"><i class="chip l" id="turn-chip"></i><span id="turn-text"></span></div>
+        <p class="msg" id="msg"></p>
+        <div class="countdown" id="cd" role="status" data-i18n-aria="cd.aria"><b id="cd-n"></b><small id="cd-l"></small></div>
+        <div class="stats">
+          <div class="stat"><b id="s-moves">0</b><small data-i18n="stat.moves"></small></div>
+          <div class="stat"><b id="s-jumps">0</b><small data-i18n="stat.jumps"></small></div>
+          <div class="stat"><b id="s-best">–</b><small data-i18n="stat.best"></small></div>
+        </div>
+        <div class="row">
+          <button id="undo" data-i18n="btn.undo"></button>
+          <button id="restart" data-i18n="btn.restart"></button>
+          <button id="show" data-i18n="btn.show"></button>
+        </div>
+      </section>
+      <section class="panel replay" id="replay" hidden>
+        <h2 data-i18n="rp.title"></h2>
+        <p class="note" id="r-note"></p>
+        <div class="row">
+          <button id="r-prev" data-i18n="rp.prev"></button>
+          <button id="r-play" class="primary"></button>
+          <button id="r-next" data-i18n="rp.next"></button>
+          <button id="r-exit" data-i18n="rp.exit"></button>
+        </div>
+      </section>
+      <section class="panel"><details>
+        <summary data-i18n="rules.title"></summary>
+        <ol class="rules">
+          <li data-i18n-html="rules.1"></li>
+          <li data-i18n-html="rules.2"></li>
+          <li data-i18n-html="rules.3"></li>
+          <li data-i18n-html="rules.4"></li>
+          <li data-i18n-html="rules.5"></li>
+        </ol>
+        <p class="note" data-i18n="rules.note"></p>
+      </details></section>
+    </div>
+  </div>
+</div>
+
+<script id="i18n">
+// Lingue dell'interfaccia: IT (fonte), PT-BR, EN, ES. build.js lo incorpora inline (niente fetch: funziona da file:// e come artifact).
+// Uso: I18N.t('chiave', {var}) · elementi con data-i18n / data-i18n-html / data-i18n-aria / data-i18n-title · <select id="selLang">.
+const I18N = ((STORE, DICT) => {
+  const LANGS = { it: ['it', 'Italiano'], pt: ['pt-BR', 'Português'], en: ['en', 'English'], es: ['es', 'Español'] };
+  const missing = new Set();
+  function detect() {
+    try { const s = localStorage.getItem(STORE); if (DICT[s]) return s; } catch (e) {}
+    const nav = typeof navigator !== 'undefined' ? navigator.language || (navigator.languages || [])[0] || '' : '';
+    return { pt: 'pt', es: 'es', it: 'it' }[String(nav).toLowerCase().slice(0, 2)] || 'en';
+  }
+  let lang = detect();
+  const subs = [];
+  const fmt = (s, v = {}) => typeof s === 'function' ? s(v) : s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
+  function t(k, v) {
+    const s = k in DICT[lang] ? DICT[lang][k] : DICT.it[k];
+    if (s === undefined) { missing.add(k); return k; }
+    return fmt(s, v);
+  }
+  function apply() {
+    if (typeof document === 'undefined') return;
+    const q = (sel, f) => document.querySelectorAll(sel).forEach(f);
+    q('[data-i18n]', e => { e.textContent = t(e.dataset.i18n); });
+    q('[data-i18n-html]', e => { e.innerHTML = t(e.dataset.i18nHtml); });
+    q('[data-i18n-aria]', e => e.setAttribute('aria-label', t(e.dataset.i18nAria)));
+    q('[data-i18n-title]', e => e.setAttribute('title', t(e.dataset.i18nTitle)));
+    document.title = t('doc.title');
+    document.documentElement.lang = LANGS[lang][0];
+    const s = document.getElementById('selLang');
+    if (s) s.value = lang;
+  }
+  function set(l) {
+    if (!DICT[l] || l === lang) return;
+    lang = l;
+    try { localStorage.setItem(STORE, l); } catch (e) {}
+    apply();
+    subs.forEach(f => f());
+  }
+  function mount() {
+    const s = document.getElementById('selLang');
+    if (s) {
+      s.replaceChildren(...Object.keys(LANGS).map(k => {
+        const o = document.createElement('option');
+        o.value = k; o.lang = LANGS[k][0]; o.textContent = LANGS[k][1];
+        return o;
+      }));
+      s.addEventListener('change', () => set(s.value));
+    }
+    apply();
+  }
+  return { t, set, apply, mount, onChange: f => subs.push(f), get lang() { return lang; }, DICT, missing };
+})('transporte.lingua', {
+  it: {
+    'doc.title': 'Travessia',
+    'lang.label': 'Lingua',
+    'sub': 'Rompicapo cooperativo di Luis Fernando Marcelino (Salvador, 2005), nato dal problema di Lucas. Chiari e scuri devono scambiarsi di posto, una mossa a testa.',
+    'board.aria': 'Tavola esagonale di 37 caselle',
+    'legend.l': 'Chiari: vanno giù, verso il bordo chiaro',
+    'legend.d': 'Scuri: vanno su, verso il bordo scuro',
+    'game.title': 'Partita',
+    'mode.aria': 'Modo di gioco',
+    'mode.solo': 'Da solo',
+    'mode.duo': 'In due',
+    'stat.moves': 'mosse',
+    'stat.jumps': 'salti',
+    'stat.best': 'tuo record',
+    'btn.undo': 'Annulla',
+    'btn.restart': 'Ricomincia',
+    'btn.show': 'Guarda la soluzione',
+    'rp.title': 'Soluzione da {n} mosse',
+    'rp.note': 'Mossa <span class="mono">{k}</span> di {n}. Il minimo vero non è noto: ne servono almeno 56.',
+    'rp.prev': 'Indietro',
+    'rp.play': 'Riproduci',
+    'rp.pause': 'Pausa',
+    'rp.next': 'Avanti',
+    'rp.exit': 'Torna alla tua partita',
+    'rules.title': 'Regole',
+    'rules.1': 'La tavola ha 37 caselle. Ci sono 17 pezzi chiari in alto e 17 scuri in basso; le 3 caselle al centro della fila di mezzo sono libere.',
+    'rules.2': 'Chiari e scuri muovono a turno, <strong>una mossa a testa</strong>. Iniziano i chiari. Da solo muovi i chiari e il computer muove gli scuri, collaborando con te; in due ognuno muove il suo colore.',
+    'rules.3': 'Un pezzo va sempre avanti, mai indietro. I chiari hanno tre direzioni: a destra, giù a destra e giù a sinistra. Gli scuri hanno le tre opposte.',
+    'rules.4': "Un pezzo può scivolare nella casella libera accanto, oppure saltare un solo pezzo dell'altro colore se dietro c'è una casella libera. Non si salta un pezzo del proprio colore.",
+    'rules.5': "Si vince insieme quando ogni colore occupa le caselle dell'altro. Se chi deve muovere non ha mosse, la partita è bloccata.",
+    'rules.note': "Nel problema di Lucas classico ci sono 9 buche in fila e 4 pezzi per colore, e i colori muovono a blocchi. Con l'alternanza stretta la fila non si risolve; l'esagono sì.",
+    'turn.done': '<strong>Scambio completato</strong>',
+    'turn.duo.l': 'Tocca al <strong>giocatore dei chiari</strong>',
+    'turn.duo.d': 'Tocca al <strong>giocatore degli scuri</strong>',
+    'turn.you': 'Tocca a te: muovi i <strong>chiari</strong>',
+    'turn.cpu': 'Il computer muove gli <strong>scuri</strong>…',
+    'msg.start': "Tocca un pezzo con l'anello, oppure direttamente la casella libera.",
+    'msg.sel': 'Tocca una casella tratteggiata.',
+    'msg.wait': 'Aspetta: muove il computer.',
+    'msg.nomoves': 'Questo pezzo non ha mosse.',
+    'msg.two': 'Due pezzi possono arrivare qui: tocca prima quello da muovere.',
+    'msg.nt.solo.l': 'Adesso tocca ai chiari.',
+    'msg.nt.solo.d': 'Adesso tocca agli scuri.',
+    'msg.nt.duo.l': 'Adesso tocca al giocatore dei chiari.',
+    'msg.nt.duo.d': 'Adesso tocca al giocatore degli scuri.',
+    'msg.replay0': 'Posizione iniziale.',
+    'msg.jump': 'Salto.',
+    'msg.slide': 'Scivolamento.',
+    'msg.goal': 'Fatto in {n} mosse, con {j} salti.',
+    'msg.goalbest': ' Hai eguagliato il record.',
+    'msg.goalnew': ' Nuovo record: meglio della soluzione nota!',
+    'cd.label': 'mosse rimaste per il record di {n}',
+    'cd.over': 'mosse oltre il record di {n}',
+    'cd.aria': 'Conto alla rovescia verso il record',
+    'msg.stuck.l': 'I chiari non hanno mosse: la partita è bloccata. Annulla qualche mossa.',
+    'msg.stuck.d': 'Gli scuri non hanno mosse: la partita è bloccata. Annulla qualche mossa.',
+    'msg.lost': 'Attenzione: da qui il computer non trova più una strada per lo scambio. Probabilmente la partita è persa; puoi annullare la tua ultima mossa.',
+    'msg.thinking': 'Il computer cerca una mossa che porti allo scambio.',
+  },
+  pt: {
+    'doc.title': 'Travessia',
+    'lang.label': 'Idioma',
+    'sub': 'Quebra-cabeça cooperativo de Luis Fernando Marcelino (Salvador, 2005), nascido do problema de Lucas. Claras e escuras precisam trocar de lugar, um movimento de cada vez.',
+    'board.aria': 'Tabuleiro hexagonal de 37 casas',
+    'legend.l': 'Claras: descem, rumo à borda clara',
+    'legend.d': 'Escuras: sobem, rumo à borda escura',
+    'game.title': 'Partida',
+    'mode.aria': 'Modo de jogo',
+    'mode.solo': 'Sozinho',
+    'mode.duo': 'Em dupla',
+    'stat.moves': 'movimentos',
+    'stat.jumps': 'saltos',
+    'stat.best': 'seu recorde',
+    'btn.undo': 'Desfazer',
+    'btn.restart': 'Recomeçar',
+    'btn.show': 'Ver a solução',
+    'rp.title': 'Solução em {n} movimentos',
+    'rp.note': 'Movimento <span class="mono">{k}</span> de {n}. O mínimo verdadeiro não é conhecido: são necessários pelo menos 56.',
+    'rp.prev': 'Voltar',
+    'rp.play': 'Reproduzir',
+    'rp.pause': 'Pausa',
+    'rp.next': 'Avançar',
+    'rp.exit': 'Voltar à sua partida',
+    'rules.title': 'Regras',
+    'rules.1': 'O tabuleiro tem 37 casas. Há 17 peças claras em cima e 17 escuras embaixo; as 3 casas no centro da fileira do meio ficam livres.',
+    'rules.2': 'Claras e escuras jogam alternadamente, <strong>um movimento de cada vez</strong>. As claras começam. Sozinho, você move as claras e o computador move as escuras, colaborando com você; em dupla, cada um move a sua cor.',
+    'rules.3': 'Uma peça sempre avança, nunca volta. As claras têm três direções: para a direita, para baixo à direita e para baixo à esquerda. As escuras têm as três opostas.',
+    'rules.4': 'Uma peça pode deslizar para a casa livre ao lado, ou saltar uma única peça da outra cor se atrás dela houver uma casa livre. Não se salta uma peça da própria cor.',
+    'rules.5': 'Vence-se juntos quando cada cor ocupa as casas da outra. Se quem deve jogar não tem movimentos, a partida está bloqueada.',
+    'rules.note': 'No problema de Lucas clássico há 9 casas em fila e 4 peças por cor, e as cores se movem em blocos. Com a alternância estrita a fila não tem solução; o hexágono, sim.',
+    'turn.done': '<strong>Troca concluída</strong>',
+    'turn.duo.l': 'Vez do <strong>jogador das claras</strong>',
+    'turn.duo.d': 'Vez do <strong>jogador das escuras</strong>',
+    'turn.you': 'Sua vez: mova as <strong>claras</strong>',
+    'turn.cpu': 'O computador move as <strong>escuras</strong>…',
+    'msg.start': 'Toque numa peça com o anel, ou diretamente na casa livre.',
+    'msg.sel': 'Toque numa casa tracejada.',
+    'msg.wait': 'Espere: o computador está jogando.',
+    'msg.nomoves': 'Esta peça não tem movimentos.',
+    'msg.two': 'Duas peças podem chegar aqui: toque primeiro na que você quer mover.',
+    'msg.nt.solo.l': 'Agora é a vez das claras.',
+    'msg.nt.solo.d': 'Agora é a vez das escuras.',
+    'msg.nt.duo.l': 'Agora é a vez do jogador das claras.',
+    'msg.nt.duo.d': 'Agora é a vez do jogador das escuras.',
+    'msg.replay0': 'Posição inicial.',
+    'msg.jump': 'Salto.',
+    'msg.slide': 'Deslizamento.',
+    'msg.goal': 'Feito em {n} movimentos, com {j} saltos.',
+    'msg.goalbest': ' Você igualou o recorde.',
+    'msg.goalnew': ' Novo recorde: melhor que a solução conhecida!',
+    'cd.label': 'movimentos restantes para o recorde de {n}',
+    'cd.over': 'movimentos além do recorde de {n}',
+    'cd.aria': 'Contagem regressiva até o recorde',
+    'msg.stuck.l': 'As claras não têm movimentos: a partida está bloqueada. Desfaça alguns movimentos.',
+    'msg.stuck.d': 'As escuras não têm movimentos: a partida está bloqueada. Desfaça alguns movimentos.',
+    'msg.lost': 'Atenção: daqui o computador não encontra mais um caminho para a troca. Provavelmente a partida está perdida; você pode desfazer seu último movimento.',
+    'msg.thinking': 'O computador procura um movimento que leve à troca.',
+  },
+  en: {
+    'doc.title': 'Travessia',
+    'lang.label': 'Language',
+    'sub': 'A cooperative puzzle by Luis Fernando Marcelino (Salvador, Brazil, 2005), born from Lucas’s problem. Light and dark pieces must swap places, one move each in turn.',
+    'board.aria': 'Hexagonal board with 37 cells',
+    'legend.l': 'Light: moves down, toward the light edge',
+    'legend.d': 'Dark: moves up, toward the dark edge',
+    'game.title': 'Game',
+    'mode.aria': 'Game mode',
+    'mode.solo': 'Solo',
+    'mode.duo': 'Two players',
+    'stat.moves': 'moves',
+    'stat.jumps': 'jumps',
+    'stat.best': 'your best',
+    'btn.undo': 'Undo',
+    'btn.restart': 'Restart',
+    'btn.show': 'Show the solution',
+    'rp.title': 'A {n}-move solution',
+    'rp.note': 'Move <span class="mono">{k}</span> of {n}. The true minimum is unknown: at least 56 moves are needed.',
+    'rp.prev': 'Back',
+    'rp.play': 'Play',
+    'rp.pause': 'Pause',
+    'rp.next': 'Forward',
+    'rp.exit': 'Back to your game',
+    'rules.title': 'Rules',
+    'rules.1': 'The board has 37 cells. There are 17 light pieces at the top and 17 dark pieces at the bottom; the 3 cells in the middle of the central row are empty.',
+    'rules.2': 'Light and dark take turns, <strong>one move each</strong>. Light starts. In solo mode you move the light pieces and the computer moves the dark ones, working with you; with two players, each moves their own color.',
+    'rules.3': 'A piece always moves forward, never back. Light pieces have three directions: right, down-right and down-left. Dark pieces have the three opposite ones.',
+    'rules.4': 'A piece can slide into the empty cell next to it, or jump over a single piece of the other color if the cell behind it is empty. You can’t jump over a piece of your own color.',
+    'rules.5': 'You win together when each color fills the other’s cells. If the side to move has no moves, the game is blocked.',
+    'rules.note': 'In Lucas’s classic problem there are 9 holes in a row and 4 pieces per color, and the colors move in runs. With strict alternation the row can’t be solved; the hexagon can.',
+    'turn.done': '<strong>Swap complete</strong>',
+    'turn.duo.l': '<strong>Light player</strong>’s turn',
+    'turn.duo.d': '<strong>Dark player</strong>’s turn',
+    'turn.you': 'Your turn: move a <strong>light</strong> piece',
+    'turn.cpu': 'The computer is moving a <strong>dark</strong> piece…',
+    'msg.start': 'Tap a piece with a ring, or tap the empty cell directly.',
+    'msg.sel': 'Tap a dashed cell.',
+    'msg.wait': 'Wait: the computer is moving.',
+    'msg.nomoves': 'This piece has no moves.',
+    'msg.two': 'Two pieces can reach this cell: first tap the one you want to move.',
+    'msg.nt.solo.l': 'It’s light’s turn now.',
+    'msg.nt.solo.d': 'It’s dark’s turn now.',
+    'msg.nt.duo.l': 'It’s the light player’s turn now.',
+    'msg.nt.duo.d': 'It’s the dark player’s turn now.',
+    'msg.replay0': 'Starting position.',
+    'msg.jump': 'Jump.',
+    'msg.slide': 'Slide.',
+    'msg.goal': 'Done in {n} moves, with {j} jumps.',
+    'msg.goalbest': ' You matched the record.',
+    'msg.goalnew': ' New record: better than the known solution!',
+    'cd.label': 'moves left to match the record of {n}',
+    'cd.over': 'moves over the record of {n}',
+    'cd.aria': 'Countdown to the record',
+    'msg.stuck.l': 'Light has no moves: the game is blocked. Undo a few moves.',
+    'msg.stuck.d': 'Dark has no moves: the game is blocked. Undo a few moves.',
+    'msg.lost': 'Careful: from here the computer can no longer find a way to the swap. The game is probably lost; you can undo your last move.',
+    'msg.thinking': 'The computer is looking for a move that leads to the swap.',
+  },
+  es: {
+    'doc.title': 'Travessia',
+    'lang.label': 'Idioma',
+    'sub': 'Rompecabezas cooperativo de Luis Fernando Marcelino (Salvador de Bahía, 2005), nacido del problema de Lucas. Claras y oscuras deben intercambiar sus lugares, un movimiento por turno.',
+    'board.aria': 'Tablero hexagonal de 37 casillas',
+    'legend.l': 'Claras: bajan, hacia el borde claro',
+    'legend.d': 'Oscuras: suben, hacia el borde oscuro',
+    'game.title': 'Partida',
+    'mode.aria': 'Modo de juego',
+    'mode.solo': 'Solo',
+    'mode.duo': 'En pareja',
+    'stat.moves': 'movimientos',
+    'stat.jumps': 'saltos',
+    'stat.best': 'tu récord',
+    'btn.undo': 'Deshacer',
+    'btn.restart': 'Reiniciar',
+    'btn.show': 'Ver la solución',
+    'rp.title': 'Solución en {n} movimientos',
+    'rp.note': 'Movimiento <span class="mono">{k}</span> de {n}. El mínimo real no se conoce: hacen falta al menos 56.',
+    'rp.prev': 'Atrás',
+    'rp.play': 'Reproducir',
+    'rp.pause': 'Pausa',
+    'rp.next': 'Adelante',
+    'rp.exit': 'Volver a tu partida',
+    'rules.title': 'Reglas',
+    'rules.1': 'El tablero tiene 37 casillas. Hay 17 piezas claras arriba y 17 oscuras abajo; las 3 casillas del centro de la fila del medio están libres.',
+    'rules.2': 'Claras y oscuras mueven por turnos, <strong>un movimiento cada una</strong>. Empiezan las claras. En solitario mueves las claras y la computadora mueve las oscuras, colaborando contigo; en pareja, cada uno mueve su color.',
+    'rules.3': 'Una pieza siempre avanza, nunca retrocede. Las claras tienen tres direcciones: a la derecha, abajo a la derecha y abajo a la izquierda. Las oscuras tienen las tres opuestas.',
+    'rules.4': 'Una pieza puede deslizarse a la casilla libre de al lado, o saltar una sola pieza del otro color si detrás hay una casilla libre. No se salta una pieza del propio color.',
+    'rules.5': 'Se gana juntos cuando cada color ocupa las casillas del otro. Si quien debe mover no tiene movimientos, la partida queda bloqueada.',
+    'rules.note': 'En el problema de Lucas clásico hay 9 agujeros en fila y 4 piezas por color, y los colores mueven en bloques. Con la alternancia estricta la fila no tiene solución; el hexágono sí.',
+    'turn.done': '<strong>Intercambio completado</strong>',
+    'turn.duo.l': 'Turno del <strong>jugador de las claras</strong>',
+    'turn.duo.d': 'Turno del <strong>jugador de las oscuras</strong>',
+    'turn.you': 'Tu turno: mueve las <strong>claras</strong>',
+    'turn.cpu': 'La computadora mueve las <strong>oscuras</strong>…',
+    'msg.start': 'Toca una pieza con anillo, o directamente la casilla libre.',
+    'msg.sel': 'Toca una casilla con borde discontinuo.',
+    'msg.wait': 'Espera: mueve la computadora.',
+    'msg.nomoves': 'Esta pieza no tiene movimientos.',
+    'msg.two': 'Dos piezas pueden llegar aquí: toca primero la que quieres mover.',
+    'msg.nt.solo.l': 'Ahora les toca a las claras.',
+    'msg.nt.solo.d': 'Ahora les toca a las oscuras.',
+    'msg.nt.duo.l': 'Ahora le toca al jugador de las claras.',
+    'msg.nt.duo.d': 'Ahora le toca al jugador de las oscuras.',
+    'msg.replay0': 'Posición inicial.',
+    'msg.jump': 'Salto.',
+    'msg.slide': 'Deslizamiento.',
+    'msg.goal': 'Hecho en {n} movimientos, con {j} saltos.',
+    'msg.goalbest': ' Igualaste el récord.',
+    'msg.goalnew': ' Nuevo récord: ¡mejor que la solución conocida!',
+    'cd.label': 'movimientos restantes para el récord de {n}',
+    'cd.over': 'movimientos por encima del récord de {n}',
+    'cd.aria': 'Cuenta regresiva hacia el récord',
+    'msg.stuck.l': 'Las claras no tienen movimientos: la partida está bloqueada. Deshaz algunos movimientos.',
+    'msg.stuck.d': 'Las oscuras no tienen movimientos: la partida está bloqueada. Deshaz algunos movimientos.',
+    'msg.lost': 'Atención: desde aquí la computadora ya no encuentra un camino hacia el intercambio. Probablemente la partida está perdida; puedes deshacer tu último movimiento.',
+    'msg.thinking': 'La computadora busca un movimiento que lleve al intercambio.',
+  },
+});
+if (typeof module !== 'undefined') module.exports = I18N;
+
+</script>
+<script id="engine">
+// Transporte — motore (Luis Fernando Marcelino, 2005; manuale «Transporte»)
+// Il problema di Lucas (rane e rospi) portato su un esagono di lato 4: 37 caselle, 17 pezzi per colore, 3 caselle libere.
+// Coordinate assiali (q,r), con |q|,|r|,|q+r| <= 3. r = -3 è la fila in alto.
+// I chiari partono dalla metà alta e vanno avanti verso destra, giù a destra e giù a sinistra; gli scuri all'opposto.
+// Mossa: scivolare nella casella libera accanto, oppure saltare un solo pezzo dell'altro colore. Una mossa a testa, mai indietro.
+(function (root) {
+  const N = 3;
+  const CELLS = [];
+  for (let r = -N; r <= N; r++) for (let q = -N; q <= N; q++) if (Math.abs(q + r) <= N) CELLS.push([q, r]);
+  const IDX = {};
+  CELLS.forEach(([q, r], i) => { IDX[q + ',' + r] = i; });
+  const at = (q, r) => (IDX[q + ',' + r] ?? -1);
+
+  const EMPTY = 0, LIGHT = 1, DARK = 2;
+  const FWD = { 1: [[1, 0], [0, 1], [-1, 1]], 2: [[-1, 0], [0, -1], [1, -1]] };
+  const FREE = [[0, 0], [-1, 0], [1, 0]].map(([q, r]) => at(q, r));
+  const lightHalf = (q, r) => r < 0 || (r === 0 && q < 0);
+
+  const START = CELLS.map(([q, r], i) => FREE.includes(i) ? EMPTY : lightHalf(q, r) ? LIGHT : DARK);
+  const GOAL = START.map(v => v === EMPTY ? EMPTY : 3 - v);
+
+  function newGame() { return { board: START.slice(), turn: LIGHT, ply: 0, jumps: 0 }; }
+
+  function legalMoves(s, only) {
+    const out = [], b = s.board, me = s.turn, you = 3 - me;
+    for (let i = 0; i < CELLS.length; i++) {
+      if (b[i] !== me || (only != null && i !== only)) continue;
+      const [q, r] = CELLS[i];
+      for (const [dq, dr] of FWD[me]) {
+        const a = at(q + dq, r + dr);
+        if (a < 0) continue;
+        if (b[a] === EMPTY) { out.push({ from: i, to: a, jump: false }); continue; }
+        const j = at(q + 2 * dq, r + 2 * dr);
+        if (b[a] === you && j >= 0 && b[j] === EMPTY) out.push({ from: i, to: j, jump: true, over: a });
+      }
+    }
+    return out;
+  }
+
+  function play(s, m) {
+    const board = s.board.slice();
+    board[m.to] = board[m.from];
+    board[m.from] = EMPTY;
+    return { board, turn: 3 - s.turn, ply: s.ply + 1, jumps: s.jumps + (m.jump ? 1 : 0) };
+  }
+
+  const isGoal = s => s.board.every((v, i) => v === GOAL[i]);
+  const isStuck = s => !isGoal(s) && legalMoves(s).length === 0;
+
+  // Soluzione da 67 mosse (48 salti, 19 scivolamenti), trovata con una ricerca a fascio e verificata a parte.
+  // Il minimo vero non è noto: i pezzi devono percorrere in tutto 112 file e ogni mossa ne copre al più 2, quindi servono almeno 56 mosse.
+  const SOLUTION_QR = [[[1,-1],[1,0]],[[-1,1],[-1,0]],[[-1,-1],[-1,1]],[[1,1],[1,-1]],[[2,-2],[0,0]],[[2,0],[2,-2]],[[-2,-1],[-1,-1]],[[2,1],[2,0]],[[2,-1],[2,1]],[[-2,1],[-2,-1]],[[0,-1],[-2,1]],[[0,1],[0,-1]],[[2,-3],[2,-1]],[[0,2],[0,1]],[[0,0],[0,2]],[[-1,3],[1,1]],[[0,-2],[0,0]],[[0,-1],[2,-3]],[[-1,1],[-1,3]],[[0,1],[0,-1]],[[-1,-1],[-1,1]],[[0,-1],[0,-2]],[[1,-3],[-1,-1]],[[1,-1],[1,-3]],[[0,-3],[0,-1]],[[1,1],[1,-1]],[[3,-1],[1,1]],[[0,3],[0,1]],[[2,1],[0,3]],[[-2,-1],[0,-3]],[[-1,-2],[-2,-1]],[[-1,0],[-1,-2]],[[3,-2],[3,-1]],[[-1,2],[-1,0]],[[1,0],[-1,2]],[[3,0],[3,-2]],[[1,-2],[1,0]],[[-1,0],[1,-2]],[[2,-1],[2,1]],[[-3,2],[-1,0]],[[-3,0],[-3,2]],[[1,2],[3,0]],[[1,1],[1,2]],[[0,1],[2,-1]],[[3,-1],[1,1]],[[-2,3],[0,1]],[[-2,1],[-2,3]],[[-3,1],[-3,0]],[[3,-3],[3,-1]],[[-3,3],[-3,1]],[[-1,1],[-3,3]],[[3,-2],[3,-3]],[[-1,-1],[-1,1]],[[-2,2],[-2,1]],[[-2,0],[-2,2]],[[3,0],[3,-2]],[[-2,-1],[-2,0]],[[-2,1],[-2,-1]],[[0,-1],[-2,1]],[[0,1],[0,-1]],[[3,-1],[3,0]],[[-3,1],[-1,-1]],[[0,0],[0,1]],[[2,0],[3,-1]],[[-2,0],[-3,1]],[[-1,0],[-2,0]],[[1,0],[2,0]]];
+  const SOLUTION = SOLUTION_QR.map(([[a, b], [c, d]]) => ({ from: at(a, b), to: at(c, d) }));
+
+  // Il computer come compagno: ricerca a fascio dalla posizione attuale fino allo scambio completo.
+  // A ogni mossa tiene le K posizioni più promettenti: avanzamento (chiari in basso, scuri in alto),
+  // un premio se chi muove dopo ha ancora mosse, e una penalità per ogni pezzo che ha un pezzo del suo colore
+  // subito davanti (la regola pratica del Lucas classico: non accodare pezzi dello stesso colore). Con PEN = 0,5
+  // un fascio di 300 risolve tutte le 29 posizioni di prova (analisi/bench); senza penalità ne servivano 3000. Restituisce la sequenza di mosse, o null se non la trova.
+  // Per la velocità: punteggio e obiettivo aggiornati mossa per mossa, posizioni già viste in una tabella hash numerica
+  // azzerata a ogni strato (le trasposizioni capitano quasi sempre alla stessa profondità), e dello strato si tengono
+  // le K migliori senza ordinarlo tutto.
+  const STEP = { 1: [], 2: [] };
+  for (const col of [LIGHT, DARK]) for (let i = 0; i < CELLS.length; i++) {
+    const [q, r] = CELLS[i], L = [];
+    for (const [dq, dr] of FWD[col]) { const a = at(q + dq, r + dr); if (a >= 0) L.push(a, at(q + 2 * dq, r + 2 * dr)); }
+    STEP[col][i] = L;
+  }
+  const NC = CELLS.length;
+  const P2 = CELLS.map((c, i) => 2 ** i);
+  const PHI = CELLS.map(([q, r]) => 2 * r + 0.5 * q);
+  let GL = 0, GD = 0;
+  GOAL.forEach((v, i) => { if (v === LIGHT) GL += P2[i]; else if (v === DARK) GD += P2[i]; });
+  function mobility(b, me) {
+    let n = 0;
+    const you = 3 - me;
+    for (let i = 0; i < NC; i++) {
+      if (b[i] !== me) continue;
+      const L = STEP[me][i];
+      for (let k = 0; k < L.length; k += 2) {
+        const a = L[k], j = L[k + 1];
+        if ((b[a] === EMPTY || (b[a] === you && j >= 0 && b[j] === EMPTY)) && ++n >= 4) return 4;
+      }
+    }
+    return n;
+  }
+  const CAP = 1 << 18;
+  let HA = null, HB = null, STAMP = null, stamp = 0, used = 0;
+  function addSeen(a, b) {
+    let h = ((a % 1000003) * 31 + (b % 999983)) >>> 0;
+    h = (h ^ (h >>> 13)) & (CAP - 1);
+    while (STAMP[h] === stamp) { if (HA[h] === a && HB[h] === b) return false; h = (h + 1) & (CAP - 1); }
+    STAMP[h] = stamp; HA[h] = a; HB[h] = b;
+    if (++used > CAP * 0.6) { stamp++; used = 0; }
+    return true;
+  }
+  function keepBest(arr, K) {
+    if (arr.length <= K) return arr;
+    let lo = 0, hi = arr.length - 1;
+    while (lo < hi) {
+      const piv = arr[(lo + hi) >> 1].sc;
+      let i = lo, j = hi;
+      while (i <= j) { while (arr[i].sc > piv) i++; while (arr[j].sc < piv) j--; if (i <= j) { const t = arr[i]; arr[i] = arr[j]; arr[j] = t; i++; j--; } }
+      if (K - 1 <= j) hi = j; else if (K - 1 >= i) lo = i; else break;
+    }
+    arr.length = K;
+    return arr;
+  }
+  function plan(s0, K, W = 3, PEN = 0.5) {
+    if (!HA) { HA = new Float64Array(CAP); HB = new Float64Array(CAP); STAMP = new Uint32Array(CAP); }
+    stamp++;
+    let lm0 = 0, dm0 = 0, sc0 = 0;
+    s0.board.forEach((v, i) => { if (v === LIGHT) { lm0 += P2[i]; sc0 += PHI[i]; } else if (v === DARK) { dm0 += P2[i]; sc0 -= PHI[i]; } });
+    if (lm0 === GL && dm0 === GD) return [];
+    let layer = [{ b: Uint8Array.from(s0.board), t: s0.turn, p: null, lm: lm0, dm: dm0, base: sc0, sc: 0 }];
+    for (let d = 0; d < 200 && layer.length; d++) {
+      stamp++; used = 0;
+      const next = [];
+      for (const n of layer) {
+        const b0 = n.b, me = n.t, you = 3 - me;
+        for (let i = 0; i < NC; i++) {
+          if (b0[i] !== me) continue;
+          const L = STEP[me][i];
+          for (let k = 0; k < L.length; k += 2) {
+            const a = L[k], j = L[k + 1];
+            let to;
+            if (b0[a] === EMPTY) to = a; else if (b0[a] === you && j >= 0 && b0[j] === EMPTY) to = j; else continue;
+            let lm = n.lm, dm = n.dm, base = n.base;
+            if (me === LIGHT) { lm += P2[to] - P2[i]; base += PHI[to] - PHI[i]; } else { dm += P2[to] - P2[i]; base -= PHI[to] - PHI[i]; }
+            if (!addSeen(lm * 2 + (me === LIGHT ? 1 : 0), dm)) continue;
+            const p = { from: i, to, prev: n.p };
+            if (lm === GL && dm === GD) { const out = []; for (let x = p; x; x = x.prev) out.push({ from: x.from, to: x.to }); return out.reverse(); }
+            const b = b0.slice(); b[to] = me; b[i] = EMPTY;
+            const mob = mobility(b, you);
+            if (!mob) continue;
+            let pairs = 0;
+            for (let c = 0; c < NC; c++) { const v = b[c]; if (!v) continue; const S = STEP[v][c]; for (let x = 0; x < S.length; x += 2) if (b[S[x]] === v) pairs++; }
+            next.push({ b, t: you, p, lm, dm, base, sc: base + W * mob - PEN * pairs + ((i * 7 + to * 13 + d) % 17) * 0.01 });
+          }
+        }
+      }
+      layer = keepBest(next, K);
+    }
+    return null;
+  }
+  // Mossa del compagno: segue il piano se lo trova (allargando la ricerca a ogni tentativo);
+  // altrimenti gioca la mossa che lascia più scelte all'altro colore e segnala che non vede più una strada.
+  const WIDTHS = [300, 1000, 3000];
+  function partnerMove(s, widths) {
+    for (const K of widths || WIDTHS) { const p = plan(s, K); if (p && p.length) return { move: p[0], plan: p, lost: false }; }
+    const ms = legalMoves(s);
+    if (!ms.length) return null;
+    let best = null;
+    for (const m of ms) { const t = play(s, m); const v = legalMoves(t).length; if (!best || v > best.v) best = { v, m }; }
+    return { move: { from: best.m.from, to: best.m.to }, plan: null, lost: true };
+  }
+
+  const api = { N, CELLS, IDX, at, EMPTY, LIGHT, DARK, FWD, FREE, START, GOAL, newGame, legalMoves, play, isGoal, isStuck, SOLUTION, LOWER_BOUND: 56, plan, partnerMove };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Transporte = api;
+})(typeof self !== 'undefined' ? self : this);
+
+</script>
+<script>
+(function () {
+  const T = window.Transporte;
+  const t = I18N.t;
+  const REC = T.SOLUTION.length;
+  const D = 62, R = 22;
+  const XY = T.CELLS.map(([q, r]) => [(q + r / 2) * D, r * D * Math.sqrt(3) / 2]);
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('board');
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; };
+  const $ = id => document.getElementById(id);
+
+  let mode = 'solo', game, hist, sel = null, last = null, pieceAt, best = null, replay = null, saved = null, timer = null;
+  let thinking = 0, planCache = null, lostWarn = false;
+  const sameMove = (a, b) => a && b && a.from === b.from && a.to === b.to;
+  // il compagno (computer) calcola in un Web Worker, così la pagina resta reattiva
+  let worker = null;
+  try {
+    const src = document.getElementById('engine').textContent + ';self.onmessage = e => { const r = self.Transporte.partnerMove(e.data.s); self.postMessage({ id: e.data.id, r }); };';
+    worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+  } catch (e) { worker = null; }
+  let ask = 0;
+  const pending = {};
+  if (worker) worker.onmessage = e => { const f = pending[e.data.id]; delete pending[e.data.id]; if (f) f(e.data.r); };
+  function think(s, cb) {
+    const id = ++ask;
+    if (worker) { pending[id] = cb; worker.postMessage({ id, s }); }
+    else setTimeout(() => cb(T.partnerMove(s)), 30);
+  }
+  const computerPlays = () => mode === 'solo' && !replay && game.turn === T.DARK && !T.isGoal(game) && !T.isStuck(game);
+  function computerTurn() {
+    if (!computerPlays() || thinking) return;
+    const token = thinking = Date.now();
+    render();
+    const t0 = Date.now();
+    const go = r => {
+      if (thinking !== token) return;
+      const wait = Math.max(0, 380 - (Date.now() - t0));
+      setTimeout(() => {
+        if (thinking !== token) return;
+        thinking = 0;
+        if (!r || !r.move) { render(); return; }
+        lostWarn = !!r.lost;
+        planCache = r.plan && sameMove(r.plan[0], r.move) ? r.plan : null;
+        const m = T.legalMoves(game).find(x => sameMove(x, r.move));
+        if (m) doMove(m); else render();
+      }, wait);
+    };
+    if (planCache && planCache.length && T.legalMoves(game).some(x => sameMove(x, planCache[0]))) go({ move: planCache[0], plan: planCache });
+    else think(game, go);
+  }
+  try { const v = localStorage.getItem('transporte-best'); if (v) best = +v; } catch (e) {}
+  try { const m = localStorage.getItem('transporte-mode'); if (m === 'due') mode = 'due'; } catch (e) {}
+
+  // tavola: esagono con il bordo diviso in due, scuro in alto (dove arrivano gli scuri) e chiaro in basso
+  const corner = (q, r, pad) => { const x = (q + r / 2) * D, y = r * D * Math.sqrt(3) / 2; const l = Math.hypot(x, y); return [x + x / l * pad, y + y / l * pad]; };
+  const hexPts = pad => [[0, -3], [3, -3], [3, 0], [0, 3], [-3, 3], [-3, 0]].map(([q, r]) => corner(q, r, pad).map(v => v.toFixed(1)).join(',')).join(' ');
+  const defs = el('defs', {});
+  const cpTop = el('clipPath', { id: 'cp-top' }, defs); el('polygon', { points: '-400,-400 400,-400 400,-30 -400,30' }, cpTop);
+  const cpBot = el('clipPath', { id: 'cp-bot' }, defs); el('polygon', { points: '-400,30 400,-30 400,400 -400,400' }, cpBot);
+  el('polygon', { points: hexPts(58), class: 'rim-d', 'clip-path': 'url(#cp-top)' });
+  el('polygon', { points: hexPts(58), class: 'rim-l', 'clip-path': 'url(#cp-bot)' });
+  el('polygon', { points: hexPts(44), class: 'plate' });
+  for (let i = -5; i <= 5; i++) el('path', { class: 'grain', d: `M -200 ${i * 30 + 6} C -80 ${i * 30 - 8}, 60 ${i * 30 + 14}, 200 ${i * 30}`, 'clip-path': 'url(#cp-plate)' });
+  const cpPlate = el('clipPath', { id: 'cp-plate' }, defs); el('polygon', { points: hexPts(42) }, cpPlate);
+  const trail = el('path', { class: 'trail', d: '' });
+  const cellEls = T.CELLS.map((c, i) => {
+    const g = el('g', { class: 'cell', 'data-i': i, transform: `translate(${XY[i][0].toFixed(1)},${XY[i][1].toFixed(1)})` });
+    el('circle', { r: R + 2, class: 'hole' }, g);
+    el('circle', { r: R - 4, class: 'hole-in', cy: 1.5 }, g);
+    const t = el('circle', { r: R + 3, class: 'target' }, g); t.style.display = 'none';
+    g.addEventListener('click', () => tap(i));
+    return { g, t };
+  });
+  const layer = el('g', {});
+  const pieces = [];
+  T.START.forEach((v, i) => {
+    if (!v) return;
+    const g = el('g', { class: 'piece ' + (v === T.LIGHT ? 'l' : 'd') }, layer);
+    el('circle', { r: R + 9, class: 'ring' }, g);
+    el('circle', { r: R, class: 'body' }, g);
+    el('circle', { r: R * .42, cx: -R * .3, cy: -R * .32, class: 'shine' }, g);
+    pieces.push({ g, color: v });
+  });
+
+  function place(animate) {
+    pieces.forEach(p => { if (!animate) p.g.style.transition = 'none'; });
+    pieceAt.forEach((pid, i) => { if (pid != null) pieces[pid].g.style.transform = `translate(${XY[i][0]}px,${XY[i][1]}px)`; });
+    if (!animate) { svg.getBoundingClientRect(); pieces.forEach(p => { p.g.style.transition = ''; }); }
+  }
+  function initPieces(board) {
+    // assegna un id stabile a ogni pezzo per animare gli spostamenti
+    pieceAt = board.map(() => null);
+    const free = { 1: [], 2: [] };
+    pieces.forEach((p, id) => free[p.color].push(id));
+    board.forEach((v, i) => { if (v) pieceAt[i] = free[v].shift(); });
+  }
+
+  function reset() { thinking = 0; planCache = null; lostWarn = false; game = T.newGame(); hist = []; sel = null; last = null; initPieces(game.board); place(false); render(); }
+  function doMove(m) {
+    hist.push(game);
+    game = T.play(game, m);
+    planCache = planCache && sameMove(planCache[0], m) ? planCache.slice(1) : null;
+    pieceAt[m.to] = pieceAt[m.from]; pieceAt[m.from] = null;
+    last = m; sel = null; place(true);
+    if (T.isGoal(game) && !replay) {
+      if (best == null || game.ply < best) { best = game.ply; try { localStorage.setItem('transporte-best', best); } catch (e) {} }
+    }
+    render();
+    if (computerPlays()) computerTurn();
+  }
+  function undo() {
+    if (!hist.length) return;
+    thinking = 0; planCache = null; lostWarn = false;
+    game = hist.pop();
+    // da solo si torna al proprio turno: si annullano la mossa del computer e la propria
+    if (mode === 'solo') while (game.turn === T.DARK && hist.length) game = hist.pop();
+    sel = null; last = null;
+    initPieces(game.board); place(false); render();
+  }
+  function tap(i) {
+    if (replay || T.isGoal(game)) return;
+    if (mode === 'solo' && game.turn === T.DARK) { flash(t('msg.wait')); return; }
+    const b = game.board;
+    if (b[i] === game.turn) {
+      const ms = T.legalMoves(game, i);
+      sel = (sel === i || !ms.length) ? null : i;
+      if (!ms.length) flash(t('msg.nomoves'));
+      render(); return;
+    }
+    if (b[i] === T.EMPTY) {
+      const all = T.legalMoves(game);
+      const into = sel != null ? all.filter(m => m.from === sel && m.to === i) : all.filter(m => m.to === i);
+      if (into.length === 1) { doMove(into[0]); return; }
+      if (into.length > 1) { flash(t('msg.two')); return; }
+    }
+    if (b[i] && b[i] !== game.turn) { flash(t('msg.nt.' + (mode === 'due' ? 'duo' : 'solo') + '.' + (game.turn === T.LIGHT ? 'l' : 'd'))); return; }
+    sel = null; render();
+  }
+  let flashMsg = null, flashT = null;
+  function flash(t) { flashMsg = t; clearTimeout(flashT); flashT = setTimeout(() => { flashMsg = null; render(); }, 2200); render(); }
+
+  function render() {
+    save();
+    const s = game, b = s.board, moves = (replay || T.isGoal(s) || (mode === 'solo' && s.turn === T.DARK)) ? [] : T.legalMoves(s);
+    const movable = new Set(moves.map(m => m.from));
+    const targets = new Set(moves.filter(m => m.from === sel).map(m => m.to));
+    cellEls.forEach(({ t }, i) => { t.style.display = targets.has(i) ? '' : 'none'; });
+    pieceAt.forEach((pid, i) => { if (pid == null) return; const c = pieces[pid].g.classList; c.toggle('sel', i === sel); c.toggle('can', movable.has(i) && sel == null); });
+    if (last) { const [a, b2] = [XY[last.from], XY[last.to]]; trail.setAttribute('d', `M ${a[0]} ${a[1]} L ${b2[0]} ${b2[1]}`); } else trail.setAttribute('d', '');
+    $('turn-chip').className = 'chip ' + (s.turn === T.LIGHT ? 'l' : 'd');
+    const goal = T.isGoal(s), stuck = T.isStuck(s);
+    const side = s.turn === T.LIGHT ? 'l' : 'd';
+    $('turn-text').innerHTML = goal ? t('turn.done') : mode === 'due' ? t('turn.duo.' + side) : t(s.turn === T.LIGHT ? 'turn.you' : 'turn.cpu');
+    const m = $('msg'); m.className = 'msg';
+    if (replay) m.textContent = replay.k === 0 ? t('msg.replay0') : t(hist.length && lastJump() ? 'msg.jump' : 'msg.slide');
+    else if (goal) { m.className = 'msg good'; m.textContent = t('msg.goal', { n: s.ply, j: s.jumps }) + (s.ply < REC ? t('msg.goalnew') : s.ply === REC ? t('msg.goalbest') : ''); }
+    else if (stuck) { m.className = 'msg bad'; m.textContent = t('msg.stuck.' + side); }
+    else if (lostWarn && mode === 'solo') { m.className = 'msg bad'; m.textContent = t('msg.lost'); }
+    else if (thinking) m.textContent = t('msg.thinking');
+    else if (flashMsg) m.textContent = flashMsg;
+    else m.textContent = sel != null ? t('msg.sel') : (s.ply === 0 ? t('msg.start') : '');
+    // conto alla rovescia verso il record: scende a ogni mossa (anche del computer), sotto zero diventa negativo
+    const left = REC - s.ply;
+    $('cd-n').textContent = left < 0 ? '−' + (-left) : String(left);
+    $('cd-l').textContent = t(left < 0 ? 'cd.over' : 'cd.label', { n: REC });
+    $('cd').classList.toggle('over', left < 0); $('cd').classList.toggle('zero', left === 0);
+    $('s-moves').textContent = s.ply; $('s-jumps').textContent = s.jumps; $('s-best').textContent = best == null ? '–' : best;
+    $('undo').disabled = !!replay || !hist.length;
+    $('undo').classList.toggle('primary', (lostWarn && mode === 'solo') || stuck); $('restart').disabled = !!replay; $('show').disabled = !!replay;
+    $('m-solo').setAttribute('aria-pressed', mode === 'solo'); $('m-due').setAttribute('aria-pressed', mode === 'due');
+    $('replay').hidden = !replay;
+    if (replay) { $('r-note').innerHTML = t('rp.note', { k: replay.k, n: REC }); $('r-prev').disabled = replay.k === 0; $('r-next').disabled = replay.k >= T.SOLUTION.length; $('r-play').textContent = t(timer ? 'rp.pause' : 'rp.play'); }
+  }
+  const lastJump = () => last && T.legalMoves(hist[hist.length - 1]).some(x => x.from === last.from && x.to === last.to && x.jump);
+
+  function startReplay() { saved = { game, hist, last }; replay = { k: 0 }; game = T.newGame(); hist = []; last = null; sel = null; initPieces(game.board); place(false); render(); }
+  function replayTo(k) {
+    stop(); game = T.newGame(); hist = [];
+    for (let i = 0; i < k; i++) { hist.push(game); game = T.play(game, T.legalMoves(game).find(m => m.from === T.SOLUTION[i].from && m.to === T.SOLUTION[i].to)); }
+    last = k ? T.SOLUTION[k - 1] : null; replay.k = k; initPieces(game.board); place(false); render();
+  }
+  function stepReplay() {
+    if (replay.k >= T.SOLUTION.length) { stop(); render(); return; }
+    const sm = T.SOLUTION[replay.k];
+    replay.k++;
+    doMove(T.legalMoves(game).find(m => m.from === sm.from && m.to === sm.to));
+  }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function exitReplay() { stop(); replay = null; ({ game, hist, last } = saved); saved = null; initPieces(game.board); place(false); render(); }
+
+  $('undo').onclick = undo;
+  $('restart').onclick = reset;
+  $('show').onclick = startReplay;
+  $('r-next').onclick = () => { stop(); stepReplay(); };
+  $('r-prev').onclick = () => replayTo(replay.k - 1);
+  $('r-play').onclick = () => { if (timer) { stop(); render(); return; } if (replay.k >= T.SOLUTION.length) replayTo(0); timer = setInterval(stepReplay, 650); render(); };
+  $('r-exit').onclick = exitReplay;
+  const setMode = m => { mode = m; thinking = 0; try { localStorage.setItem('transporte-mode', m); } catch (e) {} render(); computerTurn(); };
+  $('m-solo').onclick = () => setMode('solo');
+  $('m-due').onclick = () => setMode('due');
+  document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); } if (e.key === 'Escape') { sel = null; render(); } });
+
+  function start(data) {
+    reset();
+    if (data && Array.isArray(data.moves)) {
+      const keep = mode; mode = 'due';
+      for (const mv of data.moves) { const m = T.legalMoves(game).find(x => x.from === mv[0] && x.to === mv[1]); if (!m) break; doMove(m); }
+      mode = keep; last = null; planCache = null; render();
+    }
+    computerTurn();
+  }
+  // per le prove automatiche: lettura della posizione attuale
+  window.TransporteUI = { state: () => game, thinking: () => !!thinking };
+  function moveList() {
+    const src = replay ? saved : { game, hist };
+    const seq = []; const all = [...src.hist, src.game];
+    for (let i = 1; i < all.length; i++) { const a = all[i - 1].board, b = all[i].board; const from = a.findIndex((v, j) => v && !b[j]); const to = b.findIndex((v, j) => v && !a[j]); seq.push([from, to]); }
+    return seq;
+  }
+  // la partita resta salvata nel dispositivo (il menu della Collezione la mostra come «Partita in corso»)
+  function save() {
+    if (replay) return;
+    try { localStorage.setItem('transporte.partita.v1', JSON.stringify({ moves: moveList(), won: T.isGoal(game) })); } catch (e) {}
+  }
+  function restore() { try { const d = JSON.parse(localStorage.getItem('transporte.partita.v1')); return d && Array.isArray(d.moves) ? d : null; } catch (e) { return null; } }
+  window.claude?.hot?.snapshot?.(() => ({ moves: moveList() }));
+  // Tasto Indietro di Android: torna al menu della collezione (o chiude l'app se non c'è un menu)
+  try {
+    const C = window.Capacitor, A = C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.App;
+    if (A) A.addListener('backButton', () => { if (sel != null) { sel = null; render(); return; } if (window.history.length > 1) window.history.back(); else A.exitApp(); });
+  } catch (e) {}
+  I18N.mount();
+  const rpTitle = () => { document.querySelector('[data-i18n="rp.title"]').textContent = t('rp.title', { n: REC }); };
+  rpTitle(); I18N.onChange(rpTitle);
+  I18N.onChange(render);
+  const boot = data => start(data && Array.isArray(data.moves) ? data : restore());
+  window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+})();
+</script>
+
+<link rel="stylesheet" href="../tema/tema.css">
+<style>
+.ml-sign { max-width: 1080px; margin: 28px auto 0; padding: 0 16px; text-align: center; color: var(--muted); font-size: .88rem; }
+.ml-sign b { font-family: var(--f-display); color: var(--ink); }
+.ml-sign a { color: inherit; }
+</style>
+<p class="ml-sign" id="mlSign"></p>
+<script>
+(() => {
+  const T = {"it":"<b>Travessia</b> fa parte di <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · un gioco di Luis Fernando Marcelino · <a href=\"https://fernando-marcelino.itch.io/travessia\">Commenta su itch.io</a>","pt":"<b>Travessia</b> faz parte de <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · um jogo de Luis Fernando Marcelino · <a href=\"https://fernando-marcelino.itch.io/travessia\">Comente no itch.io</a>","en":"<b>Travessia</b> is part of <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · a game by Luis Fernando Marcelino · <a href=\"https://fernando-marcelino.itch.io/travessia\">Comment on itch.io</a>","es":"<b>Travessia</b> forma parte de <a href=\"../index.html\"><b>Populus Ludi</b></a> — Think ahead · un juego de Luis Fernando Marcelino · <a href=\"https://fernando-marcelino.itch.io/travessia\">Comenta en itch.io</a>"};
+  const L = typeof I18N !== 'undefined' ? I18N : null;
+  const show = () => { document.getElementById('mlSign').innerHTML = T[String(L && L.lang || 'en').slice(0, 2)] || T.en; };
+  L && L.onChange && L.onChange(show);
+  show();
+})();
+</script>
+</body>
+</html>
